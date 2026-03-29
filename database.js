@@ -1,7 +1,10 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const os = require('os');
 
-const dbPath = path.join(__dirname, 'carnival.db');
+// Use /tmp for serverless environments (like Vercel) because the root filesystem is read-only
+const isServerless = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production';
+const dbPath = isServerless ? path.join(os.tmpdir(), 'carnival.db') : path.join(__dirname, 'carnival.db');
 const db = new Database(dbPath);
 
 console.log('Connected to the SQLite database.');

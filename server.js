@@ -132,7 +132,12 @@ app.use((req, res) => {
   res.status(404).send('Not Found');
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-  console.log(`Admin Dashboard available at http://localhost:${PORT}/admin/index.html`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Admin Dashboard available at http://localhost:${PORT}/admin/index.html`);
+  });
+}
+
+// Export for serverless environments (like Vercel)
+module.exports = app;
