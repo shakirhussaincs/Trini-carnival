@@ -1,5 +1,6 @@
 /* =============================================
    TRINI CARNIVAL RENTALS — Main App Logic
+   (Supabase-powered, no backend required)
    ============================================= */
 
 // Global state
@@ -45,136 +46,132 @@ document.addEventListener('DOMContentLoaded', async () => {
   initPageRendering();
 });
 
-/* ---------- Data Fetching ---------- */
+/* ---------- Data Fetching (Supabase) ---------- */
 async function fetchProperties() {
   try {
-    const res = await fetch('/api/properties');
-    if (res.ok) {
-      PROPERTIES = await res.json();
-      ALL_LOCATIONS = [...new Set(PROPERTIES.map(p => p.location))].sort();
-    }
+    const { data, error } = await supabase.from('properties').select();
+    if (error) throw error;
+    PROPERTIES = data || [];
+    ALL_LOCATIONS = [...new Set(PROPERTIES.map(p => p.location))].sort();
   } catch (err) {
-    console.error('API Error:', err);
+    console.error('Supabase Error:', err);
   }
 }
 
 async function fetchPropertyDetails(id) {
   try {
-    const res = await fetch(`/api/properties/${id}`);
-    if (res.ok) {
-      const prop = await res.json();
+    const { data, error } = await supabase.from('properties').selectWhere('id', id);
+    if (error) throw error;
+    if (!data || data.length === 0) return;
+    const prop = data[0];
+    
+    // Inject Hero
+    const heroBg = document.getElementById('hero-bg-img');
+    const heroName = document.getElementById('villa-name-main');
+    if (heroBg) heroBg.style.backgroundImage = `url('${prop.image}')`;
+    if (heroName) heroName.textContent = prop.name;
+
+    // Inject Pricing
+    const priceTTD = document.getElementById('price-ttd');
+    const priceUSD = document.getElementById('price-usd');
+    if (priceTTD) priceTTD.textContent = prop.priceTTD || '$2800 - $3000 TTD';
+    if (priceUSD) priceUSD.textContent = prop.priceUSD || '$412 - $441 USD';
+
+    // Inject Details
+    const bedDetail = document.getElementById('bed-detail');
+    const bathDetail = document.getElementById('bath-detail');
+    const capDetail = document.getElementById('capacity-detail');
+    if (bedDetail) bedDetail.textContent = prop.bedroomDetail || `${prop.bedrooms} Bedrooms`;
+    if (bathDetail) bathDetail.textContent = `${prop.bathrooms} Bathrooms`;
+    if (capDetail) capDetail.textContent = `${prop.capacity} Persons`;
+
+    // Inject Amenities (Supabase returns JSONB as native arrays)
+    const amenityList = document.getElementById('amenity-list-main');
+    if (amenityList) {
+      let amenities = [];
+      if (Array.isArray(prop.amenities)) {
+        amenities = prop.amenities;
+      } else if (typeof prop.amenities === 'string') {
+        try { amenities = JSON.parse(prop.amenities); } catch(e) { amenities = []; }
+      }
+      amenityList.innerHTML = amenities.map(a => `<li>${a}</li>`).join('');
+    }
+
+    // Inject Large Feature Image
+    const featureImg = document.getElementById('main-feature-img');
+    if (featureImg) featureImg.src = prop.image;
+
+    // Inject Dense Gallery (Supabase returns JSONB as native arrays)
+    const galleryGrid = document.getElementById('gallery-dense-grid');
+    if (galleryGrid) {
+      let gallery = [];
+      if (Array.isArray(prop.gallery)) {
+        gallery = prop.gallery;
+      } else if (typeof prop.gallery === 'string') {
+        try { gallery = JSON.parse(prop.gallery); } catch(e) { gallery = []; }
+      }
       
-      // Inject Hero
-      const heroBg = document.getElementById('hero-bg-img');
-      const heroName = document.getElementById('villa-name-main');
-      if (heroBg) heroBg.style.backgroundImage = `url('${prop.image}')`;
-      if (heroName) heroName.textContent = prop.name;
-
-      // Inject Pricing
-      const priceTTD = document.getElementById('price-ttd');
-      const priceUSD = document.getElementById('price-usd');
-      if (priceTTD) priceTTD.textContent = prop.priceTTD || '$2800 - $3000 TTD';
-      if (priceUSD) priceUSD.textContent = prop.priceUSD || '$412 - $441 USD';
-
-      // Inject Details
-      const bedDetail = document.getElementById('bed-detail');
-      const bathDetail = document.getElementById('bath-detail');
-      const capDetail = document.getElementById('capacity-detail');
-      if (bedDetail) bedDetail.textContent = prop.bedroomDetail || `${prop.bedrooms} Bedrooms`;
-      if (bathDetail) bathDetail.textContent = `${prop.bathrooms} Bathrooms`;
-      if (capDetail) capDetail.textContent = `${prop.capacity} Persons`;
-
-      // Inject Amenities
-      const amenityList = document.getElementById('amenity-list-main');
-      if (amenityList) {
-        let amenities = [];
-        try {
-          amenities = typeof prop.amenities === 'string' ? JSON.parse(prop.amenities) : prop.amenities;
-        } catch(e) { amenities = prop.amenities || []; }
-        amenityList.innerHTML = amenities.map(a => `<li>${a}</li>`).join('');
-      }
-
-      // Inject Large Feature Image
-      const featureImg = document.getElementById('main-feature-img');
-      if (featureImg) featureImg.src = prop.image;
-
-      // Inject Dense Gallery
-      const galleryGrid = document.getElementById('gallery-dense-grid');
-      if (galleryGrid) {
-        let gallery = [];
-        try {
-          if (typeof prop.gallery === 'string') {
-            gallery = JSON.parse(prop.gallery);
-          } else {
-            gallery = prop.gallery || [];
-          }
-        } catch(e) { 
-          console.error('Gallery Parse Error:', e);
-          gallery = []; 
-        }
-        
-        console.log('Rendering Gallery:', gallery);
-        if (gallery.length > 0) {
-          galleryGrid.innerHTML = gallery.map(img => `
-            <div class="gallery-item">
-              <img src="${img}" alt="${prop.name} gallery" loading="lazy">
-            </div>
-          `).join('');
-        } else {
-          galleryGrid.innerHTML = '<p style="grid-column: 1/-1; opacity:0.5; padding:40px;">Detailed gallery views arriving soon.</p>';
-        }
-      }
-
-      // Inject Long Description
-      const descLong = document.getElementById('villa-description-long');
-      if (descLong) descLong.textContent = prop.descriptionLong || prop.description;
-
-      // Inject New Layout Sections (Arara Flow)
-      const nameSecondary = document.getElementById('villa-name-secondary');
-      if (nameSecondary) nameSecondary.textContent = prop.name;
-
-      const locSecondary = document.getElementById('villa-location-secondary');
-      if (locSecondary) locSecondary.textContent = prop.location;
-
-      const calTitle = document.getElementById('calendar-title');
-      if (calTitle) calTitle.textContent = `Check Availability - ${prop.name}`;
-
-      const touchText = document.getElementById('get-in-touch-text');
-      if (touchText) touchText.textContent = `Interested in ${prop.name}? Get in touch!`;
-
-      const revTitle = document.getElementById('review-title');
-      if (revTitle) revTitle.textContent = `Leave a review about your experience at ${prop.name}!`;
-
-      // Inject Bedroom Layout Grid
-      const bedroomContainer = document.getElementById('bedroom-layout-container');
-      if (bedroomContainer) {
-        let layouts = [];
-        try {
-          if (typeof prop.bedroomLayout === 'string') layouts = JSON.parse(prop.bedroomLayout);
-          else if (prop.bedroomLayout) layouts = prop.bedroomLayout;
-        } catch(e) {}
-
-        // Fallback if no specific layout is defined in DB
-        if (!layouts || layouts.length === 0) {
-          layouts = [];
-          for(let i=1; i<=prop.bedrooms; i++) {
-            layouts.push({ title: `Bedroom ${i}`, type: 'Ensuite', bed: '1 Queen Bed' });
-          }
-        }
-
-        bedroomContainer.innerHTML = layouts.map(bed => `
-          <div class="bedroom-card">
-            <svg class="bedroom-icon" viewBox="0 0 24 24"><path d="M2 22v-3a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v3M5 18V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13M2 8h20"/></svg>
-            <div class="bedroom-title">${bed.title}</div>
-            <div class="bedroom-type">${bed.type || 'Standard'}</div>
-            <div class="bedroom-bed">${bed.bed}</div>
+      if (gallery.length > 0) {
+        galleryGrid.innerHTML = gallery.map(img => `
+          <div class="gallery-item">
+            <img src="${img}" alt="${prop.name} gallery" loading="lazy">
           </div>
         `).join('');
+      } else {
+        galleryGrid.innerHTML = '<p style="grid-column: 1/-1; opacity:0.5; padding:40px;">Detailed gallery views arriving soon.</p>';
+      }
+    }
+
+    // Inject Long Description
+    const descLong = document.getElementById('villa-description-long');
+    if (descLong) descLong.textContent = prop.descriptionLong || prop.description;
+
+    // Inject New Layout Sections
+    const nameSecondary = document.getElementById('villa-name-secondary');
+    if (nameSecondary) nameSecondary.textContent = prop.name;
+
+    const locSecondary = document.getElementById('villa-location-secondary');
+    if (locSecondary) locSecondary.textContent = prop.location;
+
+    const calTitle = document.getElementById('calendar-title');
+    if (calTitle) calTitle.textContent = `Check Availability - ${prop.name}`;
+
+    const touchText = document.getElementById('get-in-touch-text');
+    if (touchText) touchText.textContent = `Interested in ${prop.name}? Get in touch!`;
+
+    const revTitle = document.getElementById('review-title');
+    if (revTitle) revTitle.textContent = `Leave a review about your experience at ${prop.name}!`;
+
+    // Inject Bedroom Layout Grid
+    const bedroomContainer = document.getElementById('bedroom-layout-container');
+    if (bedroomContainer) {
+      let layouts = [];
+      if (Array.isArray(prop.bedroomLayout)) {
+        layouts = prop.bedroomLayout;
+      } else if (typeof prop.bedroomLayout === 'string') {
+        try { layouts = JSON.parse(prop.bedroomLayout); } catch(e) {}
       }
 
-      // Update Page Title
-      document.title = `${prop.name} | Trini Carnival Rentals`;
+      // Fallback if no specific layout is defined
+      if (!layouts || layouts.length === 0) {
+        layouts = [];
+        for(let i=1; i<=prop.bedrooms; i++) {
+          layouts.push({ title: `Bedroom ${i}`, type: 'Ensuite', bed: '1 Queen Bed' });
+        }
+      }
+
+      bedroomContainer.innerHTML = layouts.map(bed => `
+        <div class="bedroom-card">
+          <svg class="bedroom-icon" viewBox="0 0 24 24"><path d="M2 22v-3a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v3M5 18V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13M2 8h20"/></svg>
+          <div class="bedroom-title">${bed.title}</div>
+          <div class="bedroom-type">${bed.type || 'Standard'}</div>
+          <div class="bedroom-bed">${bed.bed}</div>
+        </div>
+      `).join('');
     }
+
+    // Update Page Title
+    document.title = `${prop.name} | Trini Carnival Rentals`;
   } catch (err) {
     console.error('Failed to fetch property details:', err);
   }
@@ -219,7 +216,6 @@ function initDropdownInjections() {
   const locationsDropdown = document.getElementById('locations-dropdown');
 
   if (villasDropdown) {
-    // Clear existing (except View All)
     const viewAll = villasDropdown.querySelector('a[style*="font-weight: 700"]');
     villasDropdown.innerHTML = '';
     if (viewAll) villasDropdown.appendChild(viewAll);
@@ -330,7 +326,7 @@ function initForms() {
       btn.innerHTML = 'PROCESSING...';
       btn.disabled = true;
 
-      // Inquiry Submission logic
+      // Inquiry Submission logic — direct to Supabase
       if (form.id === 'booking-form') {
         const payload = {
           propertyId: document.getElementById('property-select').value,
@@ -340,22 +336,20 @@ function initForms() {
           lastName: document.getElementById('lname').value,
           email: document.getElementById('email').value,
           phone: document.getElementById('phone').value,
-          guests: document.getElementById('guests').value,
+          guests: parseInt(document.getElementById('guests').value),
           message: document.getElementById('message').value
         };
 
         try {
-          const res = await fetch('/api/bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) {
-            form.style.display = 'none';
-            const success = document.querySelector('.form-success');
-            if (success) success.classList.add('show');
-          } else { alert('Error. Please contact us directly.'); }
-        } catch (err) { alert('Connection error.'); } finally {
+          const { data, error } = await supabase.from('bookings').insert(payload);
+          if (error) throw error;
+          form.style.display = 'none';
+          const success = document.querySelector('.form-success');
+          if (success) success.classList.add('show');
+        } catch (err) {
+          console.error('Booking error:', err);
+          alert('Error. Please contact us directly.');
+        } finally {
           btn.innerHTML = originalText; btn.disabled = false;
         }
       } else {

@@ -1,18 +1,9 @@
 {
   "name": "trini-carnival-rentals",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Premium villa rentals platform — static HTML + Supabase",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "better-sqlite3": "^12.8.0",
-    "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "dev": "npx serve ."
   }
 }

@@ -1,5 +1,5 @@
 /* =============================================
-   ADMIN JS
+   ADMIN JS — Supabase-powered (no backend)
    ============================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,34 +11,36 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ---------- Stats ---------- */
 async function fetchStats() {
   try {
-    const res = await fetch('/api/stats');
-    if (res.ok) {
-      const stats = await res.json();
-      const grid = document.getElementById('stats-grid');
-      if (grid) {
-        grid.innerHTML = `
-          <div class="stat-card">
-            <h3>Total Estates</h3>
-            <div class="val">${stats.totalProperties}</div>
-          </div>
-          <div class="stat-card">
-            <h3>All Inquiries</h3>
-            <div class="val">${stats.totalBookings}</div>
-          </div>
-          <div class="stat-card stat-accent">
-            <h3>Pending Review</h3>
-            <div class="val">${stats.pendingBookings}</div>
-          </div>
-          <div class="stat-card" style="border-top-color: var(--status-approved)">
-            <h3>Approved</h3>
-            <div class="val">${stats.approvedBookings}</div>
-          </div>
-        `;
-      }
+    const totalProperties = await supabase.from('properties').count();
+    const totalBookings = await supabase.from('bookings').count();
+    const pendingBookings = await supabase.from('bookings').count('status', 'Pending');
+    const approvedBookings = await supabase.from('bookings').count('status', 'Approved');
+
+    const grid = document.getElementById('stats-grid');
+    if (grid) {
+      grid.innerHTML = `
+        <div class="stat-card">
+          <h3>Total Estates</h3>
+          <div class="val">${totalProperties}</div>
+        </div>
+        <div class="stat-card">
+          <h3>All Inquiries</h3>
+          <div class="val">${totalBookings}</div>
+        </div>
+        <div class="stat-card stat-accent">
+          <h3>Pending Review</h3>
+          <div class="val">${pendingBookings}</div>
+        </div>
+        <div class="stat-card" style="border-top-color: var(--status-approved)">
+          <h3>Approved</h3>
+          <div class="val">${approvedBookings}</div>
+        </div>
+      `;
     }
   } catch (err) {
+    console.error('Stats error:', err);
     const grid = document.getElementById('stats-grid');
-    if (grid) grid.innerHTML = '<div class="stat-card"><h3>Error</h3></div>';
+    if (grid) grid.innerHTML = '<div class="stat-card"><h3>Error loading stats</h3></div>';
   }
 }
 
@@ -49,12 +51,24 @@ async function fetchBookings() {
   const tbody = document.getElementById('bookings-tbody');
   if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading requests...</td></tr>';
   try {
-    const res = await fetch('/api/bookings');
-    if (res.ok) {
-      ALL_BOOKINGS = await res.json();
-      renderBookings();
-    }
+    // Fetch bookings ordered by createdAt descending
+    const { data: bookings, error } = await supabase.from('bookings').selectOrdered('*', 'createdAt', false);
+    if (error) throw error;
+
+    // Fetch properties for name lookup
+    const { data: properties } = await supabase.from('properties').select('id,name');
+    const propMap = {};
+    if (properties) properties.forEach(p => propMap[p.id] = p.name);
+
+    // Attach property name to each booking
+    ALL_BOOKINGS = (bookings || []).map(b => ({
+      ...b,
+      propertyName: propMap[b.propertyId] || b.propertyId || 'Unknown'
+    }));
+    
+    renderBookings();
   } catch (err) {
+    console.error('Bookings error:', err);
     if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Connection error.</td></tr>';
   }
 }
@@ -123,16 +137,12 @@ function closeModal() {
 async function updateStatus(id, newStatus) {
   if (!confirm(`Confirm status change to ${newStatus}?`)) return;
   try {
-    const res = await fetch(`/api/bookings/${id}/status`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-    if (res.ok) {
-      closeModal();
-      fetchBookings(); 
-    }
+    const { data, error } = await supabase.from('bookings').update({ status: newStatus }, 'id', id);
+    if (error) throw error;
+    closeModal();
+    fetchBookings();
   } catch (err) {
+    console.error('Update error:', err);
     alert('Failed to update.');
   }
 }
