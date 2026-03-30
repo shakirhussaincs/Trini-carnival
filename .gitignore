@@ -10,3 +10,4 @@ package-lock.json
 generate_sql.js
 generate_villas.js
 dump.json
+next-app/

@@ -324,6 +324,7 @@ function initPageRendering() {
       if (featured.length === 0) featured = PROPERTIES.slice(0, 3); // Fallback: Show first 3 if None marked as featured
       
       featuredGrid.innerHTML = featured.map(renderPropertyCard).join('');
+      initScrollReveal(); // Reveal dynamically added cards
     }
   }
 
@@ -346,6 +347,7 @@ function initPageRendering() {
       regionGrid.innerHTML = filteredProps.length 
         ? filteredProps.map(renderPropertyCard).join('') 
         : '<p class="text-center" style="grid-column: 1/-1;">Check back soon for more properties in this area.</p>';
+      initScrollReveal(); // Reveal dyamically added cards
     }
   }
 
