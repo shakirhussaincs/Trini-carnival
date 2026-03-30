@@ -63,20 +63,51 @@ h1, h2, h3, h4 {
 }
 
 .sidebar-logo {
-  padding: 30px;
-  text-align: center;
+  padding: 30px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.brand-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 12px;
+  text-decoration: none;
+  width: 100%;
 }
 
 .sidebar-logo .brand-logo {
-  height: 55px;
-  width: auto;
+  height: 60px;
+  width: 60px;
   object-fit: contain;
   background: #fff;
-  padding: 8px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.brand-title {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.brand-tagline {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 
 .sidebar-nav { 
@@ -149,7 +180,7 @@ h1, h2, h3, h4 {
 /* ---------- Stats Cards: Floating Visuals ---------- */
 .stats-grid { 
   display: grid; 
-  grid-template-columns: repeat(4, 1fr); 
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
   gap: 30px; 
   margin-bottom: 50px; 
 }
@@ -336,7 +367,7 @@ tr:hover td { background: rgba(225,29,72,0.01); }
 /* ---------- Quick Actions & Extra Visuals ---------- */
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 24px;
 }
 
