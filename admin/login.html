@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Login | Trini Carnival Rentals</title>
-  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="/admin/css/admin.css">
   <style>
     body {
       background: #000;
@@ -102,7 +102,7 @@
 
   <div class="login-container">
     <div style="background: #fff; padding: 20px; border-radius: 20px; display: inline-block; margin-bottom: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.15);">
-      <img src="../images/logo.png" alt="Trini Carnival Rentals" style="width: 120px; display: block;">
+      <img src="/images/logo.png" alt="Trini Carnival Rentals" style="width: 120px; display: block;">
     </div>
     <div class="login-header">
       <h2>Restricted Access</h2>
@@ -132,7 +132,7 @@
       // Hardcoded Credentials
       if (u === 'admin' && p === 'trini2026') {
         localStorage.setItem('admin_auth', 'true');
-        window.location.href = 'index.html';
+        window.location.href = '/admin/index.html';
       } else {
         document.getElementById('error-msg').style.display = 'block';
       }
