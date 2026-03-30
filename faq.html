@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frequently Asked Questions | Trini Carnival Rentals</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <!-- Header -->
-  <header class="header">
+  <header class="header" id="main-header">
     <div class="container">
       <a href="index.html" class="brand-container">
-        <div class="brand-title">TRINI CARNIVAL</div>
-        <div class="brand-tagline">VILLA RENTALS</div>
+        <img src="images/logo.png" alt="Trini Carnival Rentals Logo" class="brand-logo">
+        <div class="brand-info">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+        </div>
       </a>
 
       <div class="mobile-toggle" id="mobile-toggle">
@@ -21,87 +26,188 @@
         <span></span>
         <span></span>
       </div>
-      
       <nav class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
         <div class="nav-item">
           <a href="villas.html">Villas</a>
           <div class="dropdown-menu dropdown-scrollable" id="villas-dropdown">
             <div class="dropdown-header">Our Collection</div>
-            <a href="villas.html" style="font-weight: 700; color: var(--accent-red);">VIEW ALL PROPERTIES</a>
+            <a href="villas.html" style="font-weight:700; color:var(--accent-red);">VIEW ALL PROPERTIES</a>
           </div>
         </div>
         <div class="nav-item">
           <a href="#">Places</a>
           <div class="dropdown-menu" id="locations-dropdown">
-             <div class="dropdown-header">Explore Regions</div>
+            <div class="dropdown-header">Explore Regions</div>
           </div>
         </div>
         <a href="faq.html" class="active">FAQ</a>
-        <a href="book.html">Book Now</a>
+        <a href="book.html" class="btn" style="padding:0.9rem 2rem; font-size:0.7rem;">Book Now</a>
         <a href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
 
-  <!-- Title Section -->
-  <section class="section" style="padding-top: 180px; background: var(--bg-light); border-bottom: 1px solid var(--border);">
+  <!-- Hero Section -->
+  <section class="section faq-hero" style="padding-top: 180px; background: #fff;">
     <div class="container text-center">
-      <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Common Queries</h1>
-      <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--accent);">Everything you need to know for your luxury escape</p>
+      <div class="eyebrow"
+        style="letter-spacing:0.3em; text-transform:uppercase; font-size:0.75rem; font-weight:700; color:var(--accent); margin-bottom:20px;">
+        Help Center</div>
+      <h1 style="font-size: clamp(2.5rem, 6vw, 4rem); font-family: 'Playfair Display', serif; margin-bottom: 15px;">
+        Frequently Asked Questions</h1>
+      <p style="font-size: 1.1rem; color: var(--text-gray); max-width: 600px; margin: 0 auto;">Find quick answers about
+        our luxury villas, booking processes, and bespoke concierge services.</p>
     </div>
   </section>
 
   <!-- FAQ Section -->
-  <section class="section">
-    <div class="container">
+  <section class="section" style="padding-top: 40px;">
+    <div class="container" style="max-width: 1000px;">
+
+      <!-- Categories UI -->
+      <div class="faq-categories"
+        style="display:flex; justify-content:center; gap:15px; margin-bottom:60px; flex-wrap:wrap;">
+        <button class="filter-tab active">General</button>
+        <button class="filter-tab">Booking</button>
+        <button class="filter-tab">Property Policies</button>
+        <button class="filter-tab">Concierge</button>
+      </div>
+
       <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-question">What are your standard check-in and check-out times?</div>
-          <div class="faq-answer">Check-in is at 3:00 PM and check-out is at 11:00 AM. We can often accommodate early check-ins or late check-outs depending on the villa's availability, though additional fees may apply.</div>
-        </div>
+        <!-- Group: Booking & General -->
+        <h3
+          style="font-size: 1.4rem; margin-bottom: 25px; font-weight: 400; font-family: 'Playfair Display', serif; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 8px;">
+          Booking & Rates</h3>
+
         <div class="faq-item">
           <div class="faq-question">How do I receive a firm quote for my selected dates?</div>
-          <div class="faq-answer">Simply fill out our inquiry form. Pricing varies based on the season, total number of guests, and length of stay. Our concierge will review your specific needs and send a bespoke quote within 24 hours.</div>
+          <div class="faq-answer">Simply fill out our inquiry form or contact us via WhatsApp. Pricing varies based on
+            the season, total number of guests, and length of stay. Our concierge will review your specific needs and
+            send a bespoke quote within 24 hours.</div>
         </div>
-        <div class="faq-item">
-          <div class="faq-question">Are parties and large events permitted?</div>
-          <div class="faq-answer">No. All our properties are within residential or resort-style communities with strict noise ordinances. We maintain a non-events policy unless a professional event coordinator is involved and written permission is granted in advance.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">What is your cancellation policy?</div>
-          <div class="faq-answer">Due to the high-end nature of our portfolio, we maintain a firm cancellation policy. Generally, deposits are non-refundable within 60 days of arrival. We highly recommend all guests purchase travel insurance.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-question">Is airport transportation included?</div>
-          <div class="faq-answer">While not included in the standard rental rate, our concierge desk can easily arrange private chauffeurs or high-end car rentals to meet you at the airport upon arrival.</div>
-        </div>
+
         <div class="faq-item">
           <div class="faq-question">Is the security deposit mandatory?</div>
-          <div class="faq-answer">Yes. A refundable security deposit is required for all stays. This is processed via credit card hold and released within 7 days of departure, assuming no damages have occurred.</div>
+          <div class="faq-answer">Yes. A refundable security deposit is required for all stays to cover potential
+            damages. This is typically processed as a credit card hold 48 hours before arrival and released within 7
+            days of departure.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">What is your cancellation policy?</div>
+          <div class="faq-answer">Due to the exclusive nature of our portfolio, we maintain a firm policy. Deposits are
+            generally non-refundable within 60 days of arrival. We strongly recommend purchasing comprehensive travel
+            insurance for peace of mind.</div>
+        </div>
+
+        <!-- Group: Stay & Policies -->
+        <h3
+          style="font-size: 1.4rem; margin: 60px 0 25px; font-weight: 400; font-family: 'Playfair Display', serif; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 8px;">
+          Your Stay</h3>
+
+        <div class="faq-item">
+          <div class="faq-question">What are your standard check-in and check-out times?</div>
+          <div class="faq-answer">Standard check-in is at 3:00 PM and check-out is at 11:00 AM. We strive to accommodate
+            early arrivals or late departures based on villa availability, though a small fee may apply for guaranteed
+            timing.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Are parties and large events permitted?</div>
+          <div class="faq-answer">No. All our properties are within upscale residential or gated communities with strict
+            noise regulations. We maintain a strict no-parties policy. Professional events require written permission
+            and a dedicated coordinator.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Is airport transportation included?</div>
+          <div class="faq-answer">While not included in the baseline rental rate, our concierge desk specializes in
+            arranging private chauffeurs, airport VIP meet-and-greets, or high-end vehicle rentals to ensure a seamless
+            arrival.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Do you offer daily housekeeping?</div>
+          <div class="faq-answer">Most of our premium villas include light housekeeping every 2-3 days. Daily
+            housekeeping, private chefs, and personalized butler services can be added to any booking as a supplemental
+            service.</div>
         </div>
       </div>
+
+      <!-- Still have questions CTA -->
+      <div class="faq-cta"
+        style="margin-top: 100px; background: var(--bg-light); padding: 50px; border-radius: 12px; text-align: center;"
+        data-reveal>
+        <h2 style="font-size: 1.8rem; margin-bottom: 10px;">Still have questions?</h2>
+        <p style="color: var(--text-gray); margin-bottom: 30px;">Our concierge team is available 24/7 to assist with
+          your specific requirements.</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="contact.html" class="btn">CONTACT US</a>
+          <a href="https://wa.me/18683912073" class="btn btn-outline" style="letter-spacing: 0.1em;">WHATSAPP
+            CONCIERGE</a>
+        </div>
+      </div>
+
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="brand-container" style="color:#fff;">
-        <div class="brand-title" style="color:#fff;">TRINI CARNIVAL</div>
-        <div class="brand-tagline">VILLA RENTALS</div>
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+          <p style="margin-top: 20px; color: var(--text-gray); font-size: 0.9rem;">We handle the space so you can handle the pace. Experience the gold standard of island living in Tobago.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Villas</h4>
+          <ul class="footer-links">
+            <li><a href="villas.html">All Properties</a></li>
+            <li><a href="villas.html">Featured Estates</a></li>
+            <li><a href="location.html">Luxury Rentals</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="book.html">Book Now</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">Privacy Policy</a></li>
+            <li><a href="faq.html">Terms of Service</a></li>
+            <li><a href="contact.html">Concierge Service</a></li>
+          </ul>
+        </div>
       </div>
-      <div style="margin-top: 40px; display: flex; justify-content: center; gap: 30px;">
-        <a href="index.html">Home</a>
-        <a href="villas.html">Villa Portfolio</a>
-        <a href="faq.html">Rules & Policies</a>
-        <a href="contact.html">Concierge Desk</a>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Trini Carnival Rentals Tobago. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+            </svg></a>
+          <a href="#" aria-label="Instagram"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.668-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+            </svg></a>
+        </div>
       </div>
-      <p style="margin-top: 50px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">&copy; 2026 Trini Carnival Rentals Tobago. All rights reserved.</p>
     </div>
   </footer>
 
   <script src="js/supabaseClient.js"></script>
   <script src="js/main.js"></script>
 </body>
+
 </html>

@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trini Carnival Rentals | Premium Villa Escapes in Tobago</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <!-- Header -->
   <header class="header">
     <div class="container">
       <a href="index.html" class="brand-container">
-        <div class="brand-title">TRINI CARNIVAL</div>
-        <div class="brand-tagline">VILLA RENTALS</div>
+        <div class="brand-info">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+        </div>
       </a>
 
       <div class="mobile-toggle" id="mobile-toggle">
@@ -21,10 +25,10 @@
         <span></span>
         <span></span>
       </div>
-      
+
       <nav class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
-        
+
         <div class="nav-item">
           <a href="villas.html">Villas</a>
           <div class="dropdown-menu dropdown-scrollable" id="villas-dropdown">
@@ -37,8 +41,8 @@
         <div class="nav-item">
           <a href="#">Places</a>
           <div class="dropdown-menu" id="locations-dropdown">
-             <div class="dropdown-header">Explore Regions</div>
-             <!-- Dynamic Injection by main.js -->
+            <div class="dropdown-header">Explore Regions</div>
+            <!-- Dynamic Injection by main.js -->
           </div>
         </div>
 
@@ -52,7 +56,8 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-bg" style="position: absolute; inset: 0; z-index: -1;">
-      <img src="images/hero.png" alt="Luxury Tobago Villa HD Background" style="width: 100%; height: 100%; object-fit: cover;">
+      <img src="images/hero.png" alt="Luxury Tobago Villa HD Background"
+        style="width: 100%; height: 100%; object-fit: cover;">
     </div>
     <div class="hero-content">
       <h1>Villa Rentals in Tobago</h1>
@@ -65,16 +70,20 @@
   </section>
 
   <!-- Intro Section -->
-  <section class="section" style="background: var(--bg-light);">
+  <section class="section" style="background: var(--bg-light);" data-reveal>
     <div class="container text-center" style="max-width: 900px;">
-      <h2 style="font-size: 2.2rem; color: var(--accent); margin-bottom: 2.5rem;">The Gold Standard of Island Living</h2>
-      <p style="font-size: 1.2rem; line-height: 2;">We are a premier villa rental agency offering highly personalized service. From your initial booking inquiry to the final moments of your serene stay, our dedicated team is here to manage every detail.</p>
-      <p style="font-size: 1.2rem; line-height: 2;">Experience Tobago's most exclusive estates with total peace of mind. Our portfolio represents the pinnacle of Caribbean luxury.</p>
+      <h2 style="font-size: 2.2rem; color: var(--accent); margin-bottom: 2.5rem;">The Gold Standard of Island Living
+      </h2>
+      <p style="font-size: 1.2rem; line-height: 2;">We are a premier villa rental agency offering highly personalized
+        service. From your initial booking inquiry to the final moments of your serene stay, our dedicated team is here
+        to manage every detail.</p>
+      <p style="font-size: 1.2rem; line-height: 2;">Experience Tobago's most exclusive estates with total peace of mind.
+        Our portfolio represents the pinnacle of Caribbean luxury.</p>
     </div>
   </section>
 
   <!-- Featured Grid -->
-  <section class="section">
+  <section class="section" data-reveal>
     <div class="container">
       <h2 class="text-center" style="margin-bottom: 80px;">Featured Estates</h2>
       <div class="properties-grid" id="featured-grid">
@@ -89,21 +98,59 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="brand-container" style="color:#fff;">
-        <div class="brand-title">TRINI CARNIVAL RENTALS</div>
-        <div class="brand-tagline">We handle the space so you can handle the pace</div>
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+          <p style="margin-top: 20px; color: var(--text-gray); font-size: 0.9rem;">We handle the space so you can handle the pace. Experience the gold standard of island living in Tobago.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Villas</h4>
+          <ul class="footer-links">
+            <li><a href="villas.html">All Properties</a></li>
+            <li><a href="villas.html">Featured Estates</a></li>
+            <li><a href="location.html">Luxury Rentals</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="book.html">Book Now</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">Privacy Policy</a></li>
+            <li><a href="faq.html">Terms of Service</a></li>
+            <li><a href="contact.html">Concierge Service</a></li>
+          </ul>
+        </div>
       </div>
-      <div style="margin-top: 40px; display: flex; justify-content: center; gap: 30px;">
-        <a href="villas.html">Villas</a>
-        <a href="faq.html">Policies</a>
-        <a href="book.html">Booking</a>
-        <a href="contact.html">Contact Us</a>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Trini Carnival Rentals Tobago. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+            </svg></a>
+          <a href="#" aria-label="Instagram"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.668-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+            </svg></a>
+        </div>
       </div>
-      <p style="margin-top: 50px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">&copy; 2026 Trini Carnival Rentals Tobago. All rights reserved.</p>
     </div>
   </footer>
 
   <script src="js/supabaseClient.js"></script>
   <script src="js/main.js"></script>
 </body>
+
 </html>

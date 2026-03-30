@@ -13,25 +13,83 @@ const ICONS = {
   bath: '<svg viewBox="0 0 24 24"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h3v2H8v7"/></svg>',
   guests: '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
   location: '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
-  default: '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>'
+  default: '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
 };
+
+const PALM_LEAF_SVG = `
+<svg class="palm-leaf-icon" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M100 180C100 180 110 140 160 110C170 104 185 100 185 85C185 70 160 75 150 85C140 95 130 115 130 115M100 180C100 180 80 150 40 140C30 137.5 15 135 15 120C15 105 40 110 50 120C60 130 70 150 70 150M100 180V40M100 40C100 40 85 20 60 20C40 20 20 30 20 60C20 90 60 110 100 120M100 40C100 40 115 20 140 20C160 20 180 30 180 60C180 90 140 110 100 120" stroke="#FF7F50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
 
 /**
  * Renders a Luxury Property Card
  */
+/**
+ * Renders the High-Fidelity Bracket Card (used across the site)
+ */
 function renderPropertyCard(property) {
   return `
-    <a href="property.html?id=${property.id}" class="property-card" id="card-${property.id}">
-      <div class="property-img-wrapper">
+    <a href="property.html?id=${property.id}" class="v-card-ref" data-reveal>
+      <div class="v-card-img-box">
         <img src="${property.image}" alt="${property.name}" loading="lazy">
-        <div class="property-overlay">
-          <div style="font-size:0.75rem; color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:5px;">${property.location}</div>
-          <h3>${property.name}</h3>
-          <p>${property.tagline}</p>
-          <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--accent-red); margin-top:15px;">View Details →</div>
+        <div class="v-card-fade"></div>
+      </div>
+      
+      <div class="v-card-icons">
+        <div class="v-icon-col">
+          <svg viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8M4 10V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2M12 10v10M2 17h20"/></svg>
+          <div class="v-label">${property.bedrooms}</div>
+        </div>
+        <div class="v-divider"></div>
+        <div class="v-icon-col">
+          <svg viewBox="0 0 24 24"><path d="M9 6h7a2 2 0 0 1 2 2v5l-1.5 2H11l-1.5-2V8a2 2 0 0 1 2-2zM4 11h16a2 2 0 0 1 2 2v2a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-2a2 2 0 0 1 2-2z"/></svg>
+          <div class="v-label">${property.bathrooms}</div>
+        </div>
+        <div class="v-divider"></div>
+        <div class="v-icon-col">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="17" cy="11" r="3"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          <div class="v-label">${property.capacity}</div>
+        </div>
+        <div class="v-divider"></div>
+        <div class="v-price-col">
+          <div class="ttd-price">${property.priceTTD || 'Price on Inquiry'} TTD</div>
+          <div class="usd-price">${property.priceUSD || (property.priceTTD ? '$' + Math.round(parseInt(property.priceTTD.replace(/[^0-9]/g, '') || 0)/6.8) + ' USD' : 'Bespoke Pricing')}</div>
         </div>
       </div>
+
+      <div class="v-card-footer">
+        <div class="v-footer-content">
+          <h3 class="v-title">${property.name}</h3>
+          <div class="v-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="3"/></svg>
+            ${property.location}
+          </div>
+        </div>
+        <div class="v-bracket-left"></div>
+        <div class="v-bracket-right"></div>
+        <div class="v-bracket-bottom"></div>
+      </div>
     </a>
+  `;
+}
+
+// Alias for villas page consistency
+function renderVillaCardRef(property) {
+  return renderPropertyCard(property);
+}
+
+
+function renderBedroomHeader(label) {
+  return `
+    <div class="bedroom-header-wrapper" data-reveal>
+      <div class="bedroom-oval">
+        <div class="num">${label}</div>
+        <div class="text">BEDROOMS</div>
+        ${PALM_LEAF_SVG}
+      </div>
+    </div>
   `;
 }
 
@@ -39,6 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initGlobalHeader();
   initFAQ();
   initForms();
+  initScrollReveal();
   
   await fetchProperties();
   
@@ -184,7 +243,7 @@ function initGlobalHeader() {
   const navLinks = document.getElementById('nav-links');
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) header.classList.add('scrolled');
+    if (window.scrollY > 30) header.classList.add('scrolled');
     else header.classList.remove('scrolled');
   });
 
@@ -199,6 +258,7 @@ function initGlobalHeader() {
   const navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(item => {
     const link = item.querySelector('a');
+    if (!link) return;
     link.addEventListener('click', (e) => {
       if (window.innerWidth <= 1024) {
         const dropdown = item.querySelector('.dropdown-menu');
@@ -209,6 +269,18 @@ function initGlobalHeader() {
       }
     });
   });
+}
+
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
 }
 
 function initDropdownInjections() {
@@ -248,17 +320,17 @@ function initPageRendering() {
   if (path.endsWith('index.html') || path === '/' || path.endsWith('/')) {
     const featuredGrid = document.getElementById('featured-grid');
     if (featuredGrid) {
-      const featured = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 3);
+      let featured = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 3);
+      if (featured.length === 0) featured = PROPERTIES.slice(0, 3); // Fallback: Show first 3 if None marked as featured
+      
       featuredGrid.innerHTML = featured.map(renderPropertyCard).join('');
     }
   }
 
-  // All Villas Grid
+  // All Villas Grid — Grouped by Bedrooms
   if (path.endsWith('villas.html')) {
-    const villasGrid = document.getElementById('villas-grid');
-    if (villasGrid) {
-      villasGrid.innerHTML = PROPERTIES.map(renderPropertyCard).join('');
-    }
+    initVillasToolbar();
+    renderVillasGrid(PROPERTIES);
   }
 
   // Region / Location Page logic
@@ -298,6 +370,97 @@ function initPageRendering() {
     }
   }
 }
+
+function initVillasToolbar() {
+  const searchInput = document.getElementById('villa-search');
+  const tabs = document.querySelectorAll('.filter-tab');
+  const sortSelect = document.getElementById('sort-select');
+
+  if (!searchInput && !tabs.length) return;
+
+  const performFilter = () => {
+    const query = searchInput?.value.toLowerCase() || '';
+    const activeTab = document.querySelector('.filter-tab.active');
+    const filterVal = activeTab ? activeTab.getAttribute('data-filter') : 'all';
+    const sortVal = sortSelect?.value || 'default';
+
+    let filtered = PROPERTIES.filter(p => {
+      const matchSearch = p.name.toLowerCase().includes(query) || p.location.toLowerCase().includes(query);
+      
+      let matchTab = true;
+      if (filterVal !== 'all') {
+        if (filterVal === '6-8') {
+          matchTab = p.bedrooms >= 6 && p.bedrooms <= 8;
+        } else {
+          matchTab = p.bedrooms === parseInt(filterVal);
+        }
+      }
+      return matchSearch && matchTab;
+    });
+
+    // Sort
+    if (sortVal === 'name-asc') filtered.sort((a,b) => a.name.localeCompare(b.name));
+    if (sortVal === 'beds-asc') filtered.sort((a,b) => a.bedrooms - b.bedrooms);
+    if (sortVal === 'beds-desc') filtered.sort((a,b) => b.bedrooms - a.bedrooms);
+
+    renderVillasGrid(filtered);
+  };
+
+  searchInput?.addEventListener('input', performFilter);
+  sortSelect?.addEventListener('change', performFilter);
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      performFilter();
+    });
+  });
+}
+
+function renderVillasGrid(list) {
+  const villasGrid = document.getElementById('villas-grid');
+  const countDisp = document.getElementById('results-count');
+  if (!villasGrid) return;
+
+  if (countDisp) countDisp.textContent = `Showing all ${list.length} properties`;
+
+  villasGrid.innerHTML = '';
+  
+  // Grouping logic
+  const grouped = list.reduce((acc, p) => {
+    let count = p.bedrooms || 1;
+    let key = count.toString();
+    if (count >= 6 && count <= 8) key = '6-8';
+    
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(p);
+    return acc;
+  }, {});
+
+  const order = ['1', '2', '3', '4', '5', '6-8'];
+  const keys = Object.keys(grouped).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+  keys.forEach(key => {
+    const section = document.createElement('section');
+    section.className = 'bedroom-category-section';
+    section.innerHTML = renderBedroomHeader(key) + `
+      <div class="container">
+        <div class="villa-grid-ref">
+          ${grouped[key].map(renderVillaCardRef).join('')}
+        </div>
+      </div>
+    `;
+    villasGrid.appendChild(section);
+  });
+
+  if (list.length === 0) {
+    villasGrid.innerHTML = '<div class="container text-center" style="padding:100px 0; opacity:0.5;"><h3>No properties match your criteria.</h3></div>';
+  }
+
+  initScrollReveal();
+}
+
 
 /* ---------- FAQ & Forms ---------- */
 function initFAQ() {

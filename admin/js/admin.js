@@ -6,15 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname;
   if (path.endsWith('index.html') || path.endsWith('/admin/')) fetchStats();
   if (path.endsWith('bookings.html')) fetchBookings();
+  if (path.endsWith('properties.html')) {
+    fetchProperties();
+    initPropertyForm();
+  }
 });
+
+/* ---------- Navigation ---------- */
+// Handled by static 'active' class on each HTML page for simplicity as shown in HTML
 
 /* ---------- Stats ---------- */
 async function fetchStats() {
   try {
-    const totalProperties = await supabase.from('properties').count();
-    const totalBookings = await supabase.from('bookings').count();
-    const pendingBookings = await supabase.from('bookings').count('status', 'Pending');
-    const approvedBookings = await supabase.from('bookings').count('status', 'Approved');
+    // Count exact items if count() is not direct
+    const { data: props } = await supabase.from('properties').select('id');
+    const { data: books } = await supabase.from('bookings').select('id, status');
+
+    const totalProperties = props ? props.length : 0;
+    const totalBookings = books ? books.length : 0;
+    const pendingBookings = books ? books.filter(b => b.status === 'Pending').length : 0;
+    const approvedBookings = books ? books.filter(b => b.status === 'Approved').length : 0;
 
     const grid = document.getElementById('stats-grid');
     if (grid) {
@@ -44,6 +55,85 @@ async function fetchStats() {
   }
 }
 
+/* ---------- Estates Management ---------- */
+async function fetchProperties() {
+  const tbody = document.getElementById('properties-tbody');
+  if (!tbody) return;
+  try {
+    const { data, error } = await supabase.from('properties').select('*');
+    if (error) throw error;
+
+    tbody.innerHTML = (data || []).map(p => `
+      <tr>
+        <td><code>${p.id}</code></td>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.location}</td>
+        <td>${p.bedrooms} Beds</td>
+        <td>${p.capacity}</td>
+        <td>
+          <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected);" onclick="deleteProperty('${p.id}')">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    console.error('Props error:', err);
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Failed to fetch estates.</td></tr>';
+  }
+}
+
+function initPropertyForm() {
+  const form = document.getElementById('add-property-form');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button');
+    btn.innerText = 'PUBLISHING...';
+    btn.disabled = true;
+
+    const payload = {
+      id: document.getElementById('p-id').value,
+      name: document.getElementById('p-name').value,
+      tagline: document.getElementById('p-tagline').value,
+      location: document.getElementById('p-location').value,
+      badge: document.getElementById('p-badge').value,
+      bedrooms: parseInt(document.getElementById('p-beds').value),
+      bathrooms: parseFloat(document.getElementById('p-baths').value),
+      capacity: parseInt(document.getElementById('p-cap').value),
+      priceTTD: document.getElementById('p-ttd').value,
+      image: document.getElementById('p-image').value,
+      description: document.getElementById('p-desc').value,
+      descriptionLong: document.getElementById('p-desc').value,
+      gallery: [],
+      amenities: []
+    };
+
+    try {
+      const { data, error } = await supabase.from('properties').insert(payload);
+      if (error) throw error;
+      alert('Estate Published Successfully');
+      form.reset();
+      fetchProperties();
+    } catch (err) {
+      console.error('Save error:', err);
+      alert('Error saving property: ' + err.message);
+    } finally {
+      btn.innerText = 'PUBLISH ESTATE';
+      btn.disabled = false;
+    }
+  });
+}
+
+async function deleteProperty(id) {
+  if (!confirm(`Are you sure you want to delete ${id}? This action is permanent.`)) return;
+  try {
+    const { error } = await supabase.from('properties').delete('id', id);
+    if (error) throw error;
+    fetchProperties();
+  } catch (err) {
+    alert('Delete error: ' + err.message);
+  }
+}
+
 /* ---------- Inquiries ---------- */
 let ALL_BOOKINGS = [];
 
@@ -51,16 +141,13 @@ async function fetchBookings() {
   const tbody = document.getElementById('bookings-tbody');
   if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading requests...</td></tr>';
   try {
-    // Fetch bookings ordered by createdAt descending
     const { data: bookings, error } = await supabase.from('bookings').selectOrdered('*', 'createdAt', false);
     if (error) throw error;
 
-    // Fetch properties for name lookup
     const { data: properties } = await supabase.from('properties').select('id,name');
     const propMap = {};
     if (properties) properties.forEach(p => propMap[p.id] = p.name);
 
-    // Attach property name to each booking
     ALL_BOOKINGS = (bookings || []).map(b => ({
       ...b,
       propertyName: propMap[b.propertyId] || b.propertyId || 'Unknown'
@@ -82,9 +169,9 @@ function renderBookings() {
   }
   tbody.innerHTML = ALL_BOOKINGS.map(b => `
     <tr>
-      <td style="font-family:'Inter',serif;">#${b.id.toString().padStart(4, '0')}</td>
+      <td style="font-family:monospace;">#${b.id.toString().padStart(4, '0')}</td>
       <td><strong>${b.firstName} ${b.lastName}</strong><br><small style="color:var(--text-light)">${b.email}</small></td>
-      <td style="font-weight:500;">${b.propertyName}</td>
+      <td style="font-weight:600; color:var(--accent);">${b.propertyName}</td>
       <td>${b.checkIn} to ${b.checkOut}</td>
       <td>${b.guests}</td>
       <td><span class="badge badge-${b.status.toLowerCase()}">${b.status}</span></td>
@@ -146,3 +233,4 @@ async function updateStatus(id, newStatus) {
     alert('Failed to update.');
   }
 }
+

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +9,6 @@
   <meta name="description" content="Browse our exclusive collection of luxury carnival villas in Trinidad and Tobago. Filter by bedrooms, location, and capacity.">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* ============================================================
-       VILLAS PAGE — Premium Portfolio Layout
-    ============================================================ */
-
     /* ── Page Hero Banner ── */
     .villas-hero {
       height: 55vh;
@@ -40,15 +38,6 @@
       padding: 0 0 80px;
       width: 100%;
     }
-    .villas-hero-content .eyebrow {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: #D4AF37;
-      margin-bottom: 18px;
-    }
     .villas-hero-content h1 {
       font-family: 'Playfair Display', serif;
       font-size: clamp(3rem, 7vw, 6rem);
@@ -75,6 +64,40 @@
       border-bottom: 1px solid var(--border);
       padding: 0;
       box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    }
+    /* Pill Style Filters */
+    .filter-tabs {
+      display: flex;
+      gap: 12px;
+      padding: 20px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 12px 30px;
+      border-radius: 50px;
+      border: 1px solid #e1e8ed;
+      background: #fff;
+      color: #374151;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-tab:hover {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .filter-tab.active {
+      background: var(--accent-red);
+      color: #fff;
+      border-color: var(--accent-red);
+      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2);
     }
     .toolbar-inner {
       display: flex;
@@ -114,8 +137,8 @@
       border-color: var(--primary);
     }
     .filter-tab.active {
-      background: #DA291C;
-      border-color: #DA291C;
+      background: var(--accent-red);
+      border-color: var(--accent-red);
     }
 
     /* ── Search Input ── */
@@ -129,11 +152,6 @@
       padding: 10px 20px;
       min-width: 260px;
     }
-    .villas-search svg {
-      width: 16px; height: 16px;
-      stroke: var(--text-light); fill: none; stroke-width: 2;
-      flex-shrink: 0;
-    }
     .villas-search input {
       border: none; background: transparent;
       font-family: 'Inter', sans-serif;
@@ -142,24 +160,147 @@
       outline: none;
       width: 100%;
     }
-    .villas-search input::placeholder { color: var(--text-light); }
-
-    /* ── Count Bar ── */
-    .results-bar {
-      padding: 28px 0 0;
+    /* Updated Property Card for Villas Page - Exact Ref Design */
+    .property-card-ref {
+      background: #fff;
+      overflow: hidden;
       display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      margin-bottom: 20px;
+    }
+
+    .property-card-ref:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-img-wrapper-ref {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 7.5;
+      overflow: hidden;
+    }
+
+    .card-img-ref {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .img-gradient-ref {
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,1) 100%);
+      z-index: 1;
+    }
+
+    .card-info-row-ref {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 15px 0 10px;
+      margin-bottom: 10px;
+      min-height: 100px;
+    }
+
+    .info-col-ref {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 50px;
+      justify-content: flex-end;
+      gap: 15px;
+      min-width: 60px;
     }
-    .results-count {
-      font-size: 0.72rem;
+
+    .info-col-ref svg {
+      width: 38px;
+      height: 38px;
+      stroke: #443c39;
+      fill: none;
+      stroke-width: 1.2;
+    }
+
+    .info-col-ref .val {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #443c39;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 60px;
+      background: #d1cbc8;
+      margin: 0 20px;
+    }
+
+    .price-col-ref {
+      padding-left: 15px;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .price-col-ref .price-ttd {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #443c39;
+      white-space: nowrap;
+    }
+
+    .price-col-ref .price-usd {
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-light);
+      color: #443c39;
+      white-space: nowrap;
     }
-    .results-count span { color: var(--text-dark); }
+
+    .card-footer-ref {
+      padding: 10px 10px 45px;
+      text-align: center;
+      position: relative;
+    }
+
+    .card-name-ref {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      color: #443c39;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+
+    .card-location-ref {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #443c39;
+      font-weight: 400;
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      padding: 0 15px;
+    }
+
+    .footer-bracket-ref {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 35px;
+      height: 60px;
+      border-left: 2px solid #000;
+      border-right: 2px solid #000;
+      border-bottom: 2px solid #000;
+      pointer-events: none;
+    }
 
     /* ── Sort Dropdown ── */
     .sort-select {
@@ -176,241 +317,6 @@
       color: var(--text-dark);
       border-radius: 2px;
     }
-
-    /* ── Cards Grid ── */
-    .portfolio-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-    }
-    @media (max-width: 1100px) { .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
-    @media (max-width: 640px)  { .portfolio-grid { grid-template-columns: 1fr; } }
-
-    .villa-card {
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
-                  box-shadow 0.4s ease;
-      text-decoration: none;
-      color: inherit;
-    }
-    .villa-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.1);
-    }
-
-    /* Image */
-    .villa-card-img {
-      position: relative;
-      aspect-ratio: 4/3;
-      overflow: hidden;
-      background: var(--bg-light);
-    }
-    .villa-card-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-    .villa-card:hover .villa-card-img img { transform: scale(1.08); }
-
-    /* Badge */
-    .villa-badge {
-      position: absolute;
-      top: 18px; left: 18px;
-      background: #DA291C;
-      color: #fff;
-      font-size: 0.6rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      padding: 6px 14px;
-      border-radius: 2px;
-    }
-
-    /* Quick-view overlay on hover */
-    .card-hover-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      display: flex;
-      align-items: flex-end;
-      padding: 24px;
-    }
-    .villa-card:hover .card-hover-overlay { opacity: 1; }
-    .card-hover-overlay .view-btn {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.5);
-      padding: 10px 24px;
-      border-radius: 2px;
-      transition: background 0.2s;
-    }
-    .card-hover-overlay .view-btn:hover { background: rgba(255,255,255,0.15); }
-
-    /* Card Body */
-    .villa-card-body {
-      padding: 28px 28px 20px;
-      flex: 1;
-    }
-    .villa-card-location {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #B08D57;
-      margin-bottom: 8px;
-    }
-    .villa-card-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      margin-bottom: 6px;
-      line-height: 1.2;
-    }
-    .villa-card-tagline {
-      font-size: 0.82rem;
-      color: var(--text-light);
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    /* Card Stats (beds / baths / guests) */
-    .villa-card-stats {
-      display: flex;
-      gap: 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      margin: 18px 0 0;
-    }
-    .stat-pill {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 14px 8px;
-      border-right: 1px solid var(--border);
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-gray);
-    }
-    .stat-pill:last-child { border-right: none; }
-    .stat-pill svg {
-      width: 16px; height: 16px;
-      stroke: #DA291C; fill: none; stroke-width: 2;
-    }
-    .stat-pill strong {
-      font-size: 1rem;
-      font-family: 'Playfair Display', serif;
-      color: var(--text-dark);
-    }
-
-    /* Card Footer */
-    .villa-card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 28px 24px;
-    }
-    .villa-card-price {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .price-ttd {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-dark);
-    }
-    .price-usd {
-      font-size: 0.72rem;
-      color: var(--text-light);
-      letter-spacing: 0.05em;
-    }
-    .villa-card-cta {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #DA291C;
-      border-bottom: 1px solid #DA291C;
-      padding-bottom: 2px;
-      transition: opacity 0.2s;
-    }
-    .villa-card-cta:hover { opacity: 0.7; color: #DA291C; }
-
-    /* ── Empty State ── */
-    .villas-empty {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: 100px 40px;
-      color: var(--text-light);
-    }
-    .villas-empty svg {
-      width: 60px; height: 60px;
-      stroke: var(--border); fill: none; stroke-width: 1;
-      margin-bottom: 24px;
-    }
-    .villas-empty h3 {
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-gray);
-      margin-bottom: 10px;
-    }
-
-    /* ── Loading Skeleton ── */
-    .skeleton-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .skeleton-img {
-      aspect-ratio: 4/3;
-      background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-    }
-    .skeleton-line {
-      height: 14px; border-radius: 2px; margin-bottom: 10px;
-      background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-    }
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* ── CTA Bottom ── */
-    .villas-cta {
-      background: var(--primary);
-      padding: 100px 0;
-      text-align: center;
-    }
-    .villas-cta h2 { color: #fff; margin-bottom: 14px; }
-    .villas-cta p { color: rgba(255,255,255,0.65); font-size: 1.05rem; margin-bottom: 40px; max-width: 560px; margin-left: auto; margin-right: auto; }
-
-    /* Toolbar responsive */
-    @media (max-width: 768px) {
-      .toolbar-inner { padding: 14px 20px; gap: 12px; }
-      .villas-search { min-width: 180px; }
-      .villas-hero-content { padding: 0 0 50px; }
-    }
   </style>
 </head>
 <body>
@@ -419,11 +325,16 @@
   <header class="header" id="main-header">
     <div class="container">
       <a href="index.html" class="brand-container">
-        <div class="brand-title">TRINI CARNIVAL</div>
-        <div class="brand-tagline">VILLA RENTALS</div>
+        <div class="brand-info">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+        </div>
       </a>
+
       <div class="mobile-toggle" id="mobile-toggle">
-        <span></span><span></span><span></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
       <nav class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
@@ -449,79 +360,49 @@
 
   <!-- ── HERO BANNER ── -->
   <section class="villas-hero" style="margin-top: var(--header-h);">
-    <div class="villas-hero-bg" id="villas-hero-bg"></div>
+    <div class="villas-hero-bg"></div>
     <div class="villas-hero-content container">
-      <div class="eyebrow">Trinidad &amp; Tobago · Luxury Collection</div>
-      <h1>Our Exclusive<br>Villa Portfolio</h1>
+      <div class="eyebrow" style="letter-spacing:0.35em; text-transform:uppercase; font-size:0.7rem; font-weight:700; color:var(--accent); margin-bottom:15px; display:block;">Our Exclusive Portfolio</div>
+      <h1>Villa Collection</h1>
       <p class="tagline">Exceptional estates for the discerning traveler</p>
     </div>
   </section>
 
-  <!-- ── STICKY TOOLBAR (filter + search) ── -->
+  <!-- ── STICKY TOOLBAR ── -->
   <div class="villas-toolbar" id="villas-toolbar">
     <div class="toolbar-inner">
       <div class="filter-tabs" id="filter-tabs">
-        <button class="filter-tab active" data-filter="all">All Properties</button>
-        <button class="filter-tab" data-filter="2">2 Bed</button>
-        <button class="filter-tab" data-filter="3">3 Bed</button>
-        <button class="filter-tab" data-filter="4">4 Bed</button>
-        <button class="filter-tab" data-filter="5">5+ Bed</button>
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="1">1 BED</button>
+        <button class="filter-tab" data-filter="2">2 BED</button>
+        <button class="filter-tab" data-filter="3">3 BED</button>
+        <button class="filter-tab" data-filter="4">4 BED</button>
+        <button class="filter-tab" data-filter="5">5 BED</button>
+        <button class="filter-tab" data-filter="6-8">6-8 BED</button>
       </div>
       <div class="villas-search">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" id="villa-search" placeholder="Search by name or location…" autocomplete="off">
       </div>
     </div>
   </div>
 
-  <!-- ── MAIN PORTFOLIO SECTION ── -->
-  <section class="section" style="padding-top: 60px; padding-bottom: 120px;">
-    <div class="container">
-
-      <!-- Results bar -->
-      <div class="results-bar">
-        <div class="results-count" id="results-count">
-          Loading properties…
-        </div>
-        <select class="sort-select" id="sort-select">
-          <option value="default">Sort: Default</option>
-          <option value="name-asc">Name A–Z</option>
-          <option value="name-desc">Name Z–A</option>
-          <option value="beds-asc">Beds: Low to High</option>
-          <option value="beds-desc">Beds: High to Low</option>
-        </select>
-      </div>
-
-      <!-- Portfolio Grid -->
-      <div class="portfolio-grid" id="portfolio-grid">
-        <!-- Skeleton placeholders while loading -->
-        <div class="skeleton-card">
-          <div class="skeleton-img"></div>
-          <div style="padding:24px;">
-            <div class="skeleton-line" style="width:40%; height:10px;"></div>
-            <div class="skeleton-line" style="width:75%; height:18px;"></div>
-            <div class="skeleton-line" style="width:90%; height:12px;"></div>
-          </div>
-        </div>
-        <div class="skeleton-card">
-          <div class="skeleton-img"></div>
-          <div style="padding:24px;">
-            <div class="skeleton-line" style="width:35%; height:10px;"></div>
-            <div class="skeleton-line" style="width:65%; height:18px;"></div>
-            <div class="skeleton-line" style="width:85%; height:12px;"></div>
-          </div>
-        </div>
-        <div class="skeleton-card">
-          <div class="skeleton-img"></div>
-          <div style="padding:24px;">
-            <div class="skeleton-line" style="width:45%; height:10px;"></div>
-            <div class="skeleton-line" style="width:70%; height:18px;"></div>
-            <div class="skeleton-line" style="width:80%; height:12px;"></div>
-          </div>
-        </div>
-      </div>
+  <div class="container" style="padding-top: 40px;">
+    <div class="results-bar">
+      <div class="results-count" id="results-count">Showing...</div>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Default Sort</option>
+        <option value="name-asc">Name A-Z</option>
+        <option value="beds-asc">Beds (Low-High)</option>
+        <option value="beds-desc">Beds (High-Low)</option>
+      </select>
     </div>
-  </section>
+  </div>
+
+  <!-- ── PORTFOLIO GRID ── -->
+  <div id="villas-grid">
+     <!-- Groups will be injected here -->
+  </div>
 
   <!-- ── CTA SECTION ── -->
   <section class="villas-cta">
@@ -535,241 +416,260 @@
   <!-- ── FOOTER ── -->
   <footer class="footer">
     <div class="container">
-      <div class="brand-container" style="color:#fff; justify-content:center;">
-        <div class="brand-title">TRINI CARNIVAL RENTALS</div>
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <div class="brand-title">TRINI CARNIVAL</div>
+          <div class="brand-tagline">VILLA RENTALS</div>
+          <p style="margin-top: 20px; color: var(--text-gray); font-size: 0.9rem;">We handle the space so you can handle the pace. Experience the gold standard of island living in Tobago.</p>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Villas</h4>
+          <ul class="footer-links">
+            <li><a href="villas.html">All Properties</a></li>
+            <li><a href="villas.html">Featured Estates</a></li>
+            <li><a href="location.html">Luxury Rentals</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="book.html">Book Now</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul class="footer-links">
+            <li><a href="faq.html">Privacy Policy</a></li>
+            <li><a href="faq.html">Terms of Service</a></li>
+            <li><a href="contact.html">Concierge Service</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="brand-tagline" style="margin-top:8px;">We handle the space so you can handle the pace</div>
-      <div style="margin-top: 40px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-        <a href="index.html" style="color:rgba(255,255,255,0.5); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">Home</a>
-        <a href="villas.html" style="color:rgba(255,255,255,0.5); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">Villas</a>
-        <a href="faq.html" style="color:rgba(255,255,255,0.5); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">FAQ</a>
-        <a href="book.html" style="color:rgba(255,255,255,0.5); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">Book</a>
-        <a href="contact.html" style="color:rgba(255,255,255,0.5); font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase;">Contact</a>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 Trini Carnival Rentals Tobago. All rights reserved.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.668-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+        </div>
       </div>
-      <p style="margin-top:50px; font-size:0.78rem; color:rgba(255,255,255,0.25);">&copy; 2026 Trini Carnival Rentals. All rights reserved.</p>
     </div>
   </footer>
 
   <script src="js/supabaseClient.js"></script>
+  <script src="js/main.js"></script>
   <script>
-    /* ============================================================
-       VILLAS PAGE — Client Logic (Supabase + Filter/Search)
-    ============================================================ */
-    let ALL_VILLAS = [];
-    let filtered   = [];
+    let ALL_DATA = [];
+    let FILTERED = [];
 
-    // Offset toolbar top to account for fixed header
-    function positionToolbar() {
-      const header = document.getElementById('main-header');
-      const toolbar = document.getElementById('villas-toolbar');
-      if (header && toolbar) toolbar.style.top = header.offsetHeight + 'px';
+    const ICONS = {
+      bed: `<svg viewBox="0 0 24 24"><path d="M2 19h20M2 11h20M2 15h20M7 7h10a2 2 0 0 1 2 2v2H5V9a2 2 0 0 1 2-2zM5 19v-4m14 4v-4"/></svg>`,
+      bath: `<svg viewBox="0 0 24 24"><path d="M9 6V3M15 6V3M21 11v5a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-5h18zM5 11V8a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v3"/></svg>`,
+      guests: `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+    };
+
+    const PALM_LEAF_SVG = `
+      <svg class="palm-leaf-icon" viewBox="0 0 100 100">
+        <path d="M50 20 L50 90 M50 90 Q90 70 90 40 Q90 15 65 15 Q50 15 50 35 Q50 15 35 15 Q10 15 10 40 Q10 70 50 90" fill="none" stroke="#FFB7A1" stroke-width="1.5" />
+        <path d="M50 90 Q75 75 75 50 Q75 45 65 45 Q50 45 50 55 M50 55 Q50 45 35 45 Q25 45 25 50 Q25 75 50 90" fill="none" stroke="#FFB7A1" stroke-width="1" />
+      </svg>
+    `;
+
+    // Reposition toolbar based on header height
+    function posToolbar() {
+      const h = document.getElementById('main-header');
+      const t = document.getElementById('villas-toolbar');
+      if (h && t) t.style.top = h.offsetHeight + 'px';
     }
-    window.addEventListener('resize', positionToolbar);
+    window.addEventListener('resize', posToolbar);
 
     document.addEventListener('DOMContentLoaded', async () => {
-      positionToolbar();
-      await loadVillas();
-      initFilters();
-      initSearch();
-      initSort();
-      initHeader();
+      posToolbar();
+      await fetchAll();
+      initUI();
     });
 
-    /* ── Fetch ── */
-    async function loadVillas() {
+    async function fetchAll() {
       try {
         const { data, error } = await supabase.from('properties').select();
         if (error) throw error;
-        ALL_VILLAS = data || [];
-        filtered   = [...ALL_VILLAS];
-        renderGrid(filtered);
-        updateCount(filtered.length);
+        
+        let fetched = data || [];
+        
+        // Ensure 6-8 bedroom section has sample data for demonstration as requested
+        const sample68 = [
+          {
+            id: 'mock-1',
+            name: 'The Presidential Estate',
+            location: 'Mount Hay, Tobago',
+            bedrooms: 7,
+            bathrooms: 6,
+            capacity: 14,
+            image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
+            priceTTD: '$4500 - $6000 TTD',
+            priceUSD: '$660 - $880 USD',
+            tagline: 'The pinnacle of luxury for large groups and celebrations.'
+          },
+          {
+            id: 'mock-2',
+            name: 'Horizon Heights Manor',
+            location: 'Bacolet Point',
+            bedrooms: 6,
+            bathrooms: 5,
+            capacity: 12,
+            image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80',
+            priceTTD: '$3800 - $5200 TTD',
+            priceUSD: '$560 - $760 USD',
+            tagline: 'Vast ocean views with unparalleled privacy.'
+          }
+        ];
 
-        // Inject dropdowns for nav
-        injectNavDropdowns(ALL_VILLAS);
+        ALL_DATA = [...fetched, ...sample68];
+        FILTERED = [...ALL_DATA];
+        renderGroups(FILTERED);
+        updateUI();
       } catch (err) {
-        console.error('Supabase error:', err);
-        document.getElementById('portfolio-grid').innerHTML = `
-          <div class="villas-empty">
-            <svg viewBox="0 0 24 24"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0-14 0M21 21l-4.35-4.35"/></svg>
-            <h3>Unable to load properties</h3>
-            <p>Please try refreshing the page or contact us directly.</p>
-          </div>`;
+        console.error('Fetch error:', err);
       }
     }
 
-    /* ── Render Cards ── */
-    function renderCard(p) {
-      const badge  = p.badge ? `<div class="villa-badge">${p.badge}</div>` : '';
-      const imgSrc = p.image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800';
-      const baths  = p.bathrooms || '—';
-      const cap    = p.capacity  || '—';
-      const beds   = p.bedrooms  || '—';
-      const ttd    = p.priceTTD  || 'Inquire';
-      const usd    = p.priceUSD  ? `≈ ${p.priceUSD}` : '';
-      const tag    = p.tagline   || p.description || '';
-
+    function renderRefCard(p) {
       return `
-        <a class="villa-card" href="property.html?id=${p.id}" id="card-${p.id}">
-          <div class="villa-card-img">
-            <img src="${imgSrc}" alt="${p.name}" loading="lazy">
-            ${badge}
-            <div class="card-hover-overlay">
-              <span class="view-btn">View Estate</span>
+        <a href="property.html?id=${p.id}" class="property-card-ref" data-reveal>
+          <div class="card-img-wrapper-ref">
+            <img src="${p.image}" alt="${p.name}" class="card-img-ref" loading="lazy">
+            <div class="img-gradient-ref"></div>
+          </div>
+          <div class="card-info-row-ref">
+            <div class="info-col-ref">
+              ${ICONS.bed}
+              <span class="val">${p.bedrooms}</span>
+            </div>
+            <div class="divider-v"></div>
+            <div class="info-col-ref">
+              ${ICONS.bath}
+              <span class="val">${p.bathrooms}</span>
+            </div>
+            <div class="divider-v"></div>
+            <div class="info-col-ref">
+              ${ICONS.guests}
+              <span class="val">${p.capacity}</span>
+            </div>
+            <div class="divider-v"></div>
+            <div class="price-col-ref">
+              <div class="price-ttd">${p.priceTTD || '$1000 - $1200 TTD'}</div>
+              <div class="price-usd">${p.priceUSD || '$147 - $176 USD'}</div>
             </div>
           </div>
-
-          <div class="villa-card-body">
-            <div class="villa-card-location">${p.location || 'Trinidad & Tobago'}</div>
-            <div class="villa-card-name">${p.name}</div>
-            <p class="villa-card-tagline">${tag}</p>
-
-            <div class="villa-card-stats">
-              <div class="stat-pill">
-                <svg viewBox="0 0 24 24"><path d="M3 7v11m0-4h18m0 4V8a1 1 0 0 0-1-1H10a1 1 0 0 0-1 1v4"/><rect x="3" y="7" width="4" height="4" rx="1"/></svg>
-                <strong>${beds}</strong>
-                <span>Beds</span>
-              </div>
-              <div class="stat-pill">
-                <svg viewBox="0 0 24 24"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h3v2H8v7"/></svg>
-                <strong>${baths}</strong>
-                <span>Baths</span>
-              </div>
-              <div class="stat-pill">
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <strong>${cap}</strong>
-                <span>Guests</span>
-              </div>
+          <div class="card-footer-ref">
+            <div class="footer-bracket-ref"></div>
+            <div class="card-name-ref">${p.name}</div>
+            <div class="card-location-ref">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              ${p.location}
             </div>
-          </div>
-
-          <div class="villa-card-footer">
-            <div class="villa-card-price">
-              <div class="price-ttd">${ttd}</div>
-              <div class="price-usd">${usd}</div>
-            </div>
-            <span class="villa-card-cta">Inquire →</span>
           </div>
         </a>`;
     }
 
-    function renderGrid(list) {
-      const grid = document.getElementById('portfolio-grid');
-      if (!list || list.length === 0) {
-        grid.innerHTML = `
-          <div class="villas-empty">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <h3>No properties match your search</h3>
-            <p>Try adjusting your filters or <a href="contact.html" style="color:var(--accent-red);">contact us</a> for a custom search.</p>
-          </div>`;
+    function renderGroups(list) {
+      const grid = document.getElementById('villas-grid');
+      grid.innerHTML = '';
+
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="container" style="text-align:center; padding:100px;"><h3>No villas match your search.</h3></div>';
         return;
       }
-      grid.innerHTML = list.map(renderCard).join('');
+
+      // Grouping logic
+      const grouped = list.reduce((acc, p) => {
+        let count = p.bedrooms || 1;
+        let key = count.toString();
+        if (count >= 6 && count <= 8) key = '6-8';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(p);
+        return acc;
+      }, {});
+
+      const order = ['1', '2', '3', '4', '5', '6-8'];
+      const keys = Object.keys(grouped).sort((a,b) => order.indexOf(a) - order.indexOf(b));
+
+      keys.forEach(key => {
+        const section = document.createElement('section');
+        section.className = 'bedroom-category-section';
+        const displayLabel = key === '6-8' ? '6-8+' : key;
+        section.innerHTML = `
+          <div class="bedroom-header-wrapper" data-reveal>
+            <div class="bedroom-oval">
+              <div class="num">${displayLabel}</div>
+              <div class="text">BEDROOMS</div>
+              ${PALM_LEAF_SVG}
+            </div>
+          </div>
+          <div class="container">
+            <div class="villa-grid-ref">
+              ${grouped[key].map(renderRefCard).join('')}
+            </div>
+          </div>
+        `;
+        grid.appendChild(section);
+      });
+
+      if (typeof initScrollReveal === 'function') initScrollReveal();
     }
 
-    function updateCount(n) {
-      document.getElementById('results-count').innerHTML =
-        `Showing <span>${n}</span> propert${n === 1 ? 'y' : 'ies'}`;
+    function updateUI() {
+      document.getElementById('results-count').innerHTML = `Showing <span>${FILTERED.length}</span> propert${FILTERED.length === 1 ? 'y' : 'ies'}`;
     }
 
-    /* ── Filters ── */
-    let activeFilter = 'all';
-    let searchQuery  = '';
-    let sortMode     = 'default';
-
-    function initFilters() {
+    function initUI() {
+      // Filters
       document.querySelectorAll('.filter-tab').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          activeFilter = btn.dataset.filter;
-          applyAll();
+          apply();
         });
       });
-    }
-
-    function initSearch() {
-      const input = document.getElementById('villa-search');
-      input.addEventListener('input', () => {
-        searchQuery = input.value.trim().toLowerCase();
-        applyAll();
-      });
-    }
-
-    function initSort() {
-      document.getElementById('sort-select').addEventListener('change', e => {
-        sortMode = e.target.value;
-        applyAll();
-      });
-    }
-
-    function applyAll() {
-      let result = [...ALL_VILLAS];
-
-      // Bedroom filter
-      if (activeFilter !== 'all') {
-        const n = parseInt(activeFilter);
-        if (activeFilter === '5') result = result.filter(p => (p.bedrooms || 0) >= 5);
-        else result = result.filter(p => p.bedrooms === n);
-      }
 
       // Search
-      if (searchQuery) {
-        result = result.filter(p =>
-          (p.name     || '').toLowerCase().includes(searchQuery) ||
-          (p.location || '').toLowerCase().includes(searchQuery) ||
-          (p.tagline  || '').toLowerCase().includes(searchQuery)
-        );
-      }
+      document.getElementById('villa-search').addEventListener('input', apply);
 
       // Sort
-      if (sortMode === 'name-asc')   result.sort((a,b) => a.name.localeCompare(b.name));
-      if (sortMode === 'name-desc')  result.sort((a,b) => b.name.localeCompare(a.name));
-      if (sortMode === 'beds-asc')   result.sort((a,b) => (a.bedrooms||0) - (b.bedrooms||0));
-      if (sortMode === 'beds-desc')  result.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
-
-      filtered = result;
-      renderGrid(filtered);
-      updateCount(filtered.length);
+      document.getElementById('sort-select').addEventListener('change', apply);
     }
 
-    /* ── Nav Dropdowns ── */
-    function injectNavDropdowns(properties) {
-      const vd = document.getElementById('villas-dropdown');
-      if (vd) {
-        vd.innerHTML = '<div class="dropdown-header">Our Collection</div><a href="villas.html" style="font-weight:700; color:var(--accent-red);">VIEW ALL PROPERTIES</a>';
-        [...properties].sort((a,b) => a.name.localeCompare(b.name)).forEach(p => {
-          const a = document.createElement('a');
-          a.href = `property.html?id=${p.id}`;
-          a.textContent = p.name;
-          vd.appendChild(a);
-        });
-      }
-      const ld = document.getElementById('locations-dropdown');
-      if (ld) {
-        const locs = [...new Set(properties.map(p => p.location))].sort();
-        ld.innerHTML = '<div class="dropdown-header">Explore Regions</div>';
-        locs.forEach(loc => {
-          const a = document.createElement('a');
-          a.href = `location.html?place=${encodeURIComponent(loc)}`;
-          a.textContent = loc;
-          ld.appendChild(a);
-        });
-      }
-    }
+    function apply() {
+      let result = [...ALL_DATA];
+      const filter = document.querySelector('.filter-tab.active').dataset.filter;
+      const search = document.getElementById('villa-search').value.toLowerCase();
+      const sort = document.getElementById('sort-select').value;
 
-    /* ── Header Scroll ── */
-    function initHeader() {
-      const header = document.getElementById('main-header');
-      window.addEventListener('scroll', () => {
-        header.classList.toggle('scrolled', window.scrollY > 50);
-      });
-      const toggle = document.getElementById('mobile-toggle');
-      const navLinks = document.getElementById('nav-links');
-      if (toggle) toggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        toggle.classList.toggle('active');
-      });
+      if (filter !== 'all') {
+        if (filter === '6-8') {
+          result = result.filter(p => (p.bedrooms || 0) >= 6 && (p.bedrooms || 0) <= 8);
+        } else {
+          const n = parseInt(filter);
+          result = result.filter(p => p.bedrooms === n);
+        }
+      }
+
+      if (search) {
+        result = result.filter(p => (p.name||'').toLowerCase().includes(search) || (p.location||'').toLowerCase().includes(search));
+      }
+
+      if (sort === 'name-asc') result.sort((a,b) => a.name.localeCompare(b.name));
+      if (sort === 'beds-asc') result.sort((a,b) => (a.bedrooms||0) - (b.bedrooms||0));
+      if (sort === 'beds-desc') result.sort((a,b) => (b.bedrooms||0) - (a.bedrooms||0));
+
+      FILTERED = result;
+      renderGroups(FILTERED);
+      updateUI();
     }
   </script>
 </body>
