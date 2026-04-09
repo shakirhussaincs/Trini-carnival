@@ -66,6 +66,18 @@ const supabase = {
         return { data: await res.json(), error: null };
       },
 
+      // DELETE with filter
+      async delete(column, value) {
+        const params = new URLSearchParams();
+        params.append(column, `eq.${value}`);
+        const res = await fetch(`${url}?${params}`, {
+          method: 'DELETE',
+          headers
+        });
+        if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
+        return { data: null, error: null };
+      },
+
       // COUNT via HEAD
       async count(column, value) {
         const h = { ...headers, 'Prefer': 'count=exact', 'Range-Unit': 'items', 'Range': '0-0' };
