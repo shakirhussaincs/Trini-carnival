@@ -81,33 +81,72 @@ async function fetchProperties() {
   }
 }
 
+const processImageFile = (file, maxWidth = 1200) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 function initPropertyForm() {
   const form = document.getElementById('add-property-form');
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button');
-    btn.innerText = 'PUBLISHING...';
+    btn.innerText = 'PROCESSING IMAGES...';
     btn.disabled = true;
 
-    const payload = {
-      id: document.getElementById('p-id').value,
-      name: document.getElementById('p-name').value,
-      tagline: document.getElementById('p-tagline').value,
-      location: document.getElementById('p-location').value,
-      badge: document.getElementById('p-badge').value,
-      bedrooms: parseInt(document.getElementById('p-beds').value),
-      bathrooms: parseFloat(document.getElementById('p-baths').value),
-      capacity: parseInt(document.getElementById('p-cap').value),
-      priceTTD: document.getElementById('p-ttd').value,
-      image: document.getElementById('p-image').value,
-      description: document.getElementById('p-desc').value,
-      descriptionLong: document.getElementById('p-desc').value,
-      gallery: [],
-      amenities: []
-    };
-
     try {
+      const fileInput = document.getElementById('p-image');
+      const files = Array.from(fileInput.files);
+      if (files.length === 0) throw new Error("At least one image is required.");
+      
+      const base64Images = [];
+      for (const file of files) {
+        const base64 = await processImageFile(file);
+        base64Images.push(base64);
+      }
+
+      btn.innerText = 'PUBLISHING...';
+
+      const payload = {
+        id: document.getElementById('p-id').value,
+        name: document.getElementById('p-name').value,
+        tagline: document.getElementById('p-tagline').value,
+        location: document.getElementById('p-location').value,
+        badge: document.getElementById('p-badge').value,
+        bedrooms: parseInt(document.getElementById('p-beds').value),
+        bathrooms: parseFloat(document.getElementById('p-baths').value),
+        capacity: parseInt(document.getElementById('p-cap').value),
+        priceTTD: document.getElementById('p-ttd').value,
+        image: base64Images[0],
+        description: document.getElementById('p-desc').value,
+        descriptionLong: document.getElementById('p-desc').value,
+        gallery: base64Images,
+        amenities: []
+      };
+
       const { data, error } = await supabase.from('properties').insert(payload);
       if (error) throw error;
       alert('Estate Published Successfully');
