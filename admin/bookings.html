@@ -99,5 +99,25 @@
 
 <script src="/js/supabaseClient.js"></script>
 <script src="/admin/js/admin.js"></script>
+
+<!-- Custom Confirm Dialog -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-modal">
+    <div class="confirm-icon" id="confirm-icon">?</div>
+    <h3 class="confirm-title" id="confirm-title">Are you sure?</h3>
+    <p class="confirm-text" id="confirm-text">This action cannot be undone.</p>
+    <div class="confirm-actions">
+      <button class="confirm-btn-secondary" id="confirm-cancel">Cancel</button>
+      <button class="confirm-btn-primary" id="confirm-ok">Yes, Proceed</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Toast Notification -->
+<div class="toast-overlay" id="toast-overlay"></div>
+<div class="toast-container" id="toast-container">
+  <span class="toast-icon" id="toast-icon">✨</span>
+  <p class="toast-msg" id="toast-msg">Success!</p>
+</div>
 </body>
 </html>

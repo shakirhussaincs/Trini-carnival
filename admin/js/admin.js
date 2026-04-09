@@ -146,20 +146,55 @@ function showToast(msg, icon = '✨') {
   const msgEl = document.getElementById('toast-msg');
   const iconEl = document.getElementById('toast-icon');
 
-  if (!container) {
-    alert(msg); // Fallback
-    return;
-  }
+  if (!container) return; // Fallback handled by UI presence
 
   msgEl.textContent = msg;
   iconEl.textContent = icon;
+  
+  // Clean classes
   overlay.classList.add('active');
   container.classList.add('active');
 
   setTimeout(() => {
     overlay.classList.remove('active');
     container.classList.remove('active');
-  }, 3000);
+  }, 3500);
+}
+
+function showConfirmModal({ title, msg, icon, onConfirm }) {
+  const overlay = document.getElementById('confirm-overlay');
+  const titleEl = document.getElementById('confirm-title');
+  const textEl = document.getElementById('confirm-text');
+  const iconEl = document.getElementById('confirm-icon');
+  const okBtn = document.getElementById('confirm-ok');
+  const cancelBtn = document.getElementById('confirm-cancel');
+
+  if (!overlay) return;
+
+  titleEl.textContent = title;
+  textEl.textContent = msg;
+  iconEl.textContent = icon || '❓';
+  
+  overlay.classList.add('active');
+
+  const handleOk = () => {
+    overlay.classList.remove('active');
+    cleanup();
+    if (onConfirm) onConfirm();
+  };
+
+  const handleCancel = () => {
+    overlay.classList.remove('active');
+    cleanup();
+  };
+
+  const cleanup = () => {
+    okBtn.removeEventListener('click', handleOk);
+    cancelBtn.removeEventListener('click', handleCancel);
+  };
+
+  okBtn.addEventListener('click', handleOk);
+  cancelBtn.addEventListener('click', handleCancel);
 }
 
 let EDIT_DATA = null;
@@ -171,7 +206,7 @@ async function editProperty(id) {
     if (!data || data.length === 0) return;
     
     const p = data[0];
-    EDIT_DATA = p;
+    EDIT_DATA = { ...p }; // Clone for comparison
     
     // Fill form
     document.getElementById('p-id').value = p.id;
@@ -205,6 +240,49 @@ async function editProperty(id) {
 
 function cancelEditing() {
   const form = document.getElementById('add-property-form');
+  
+  // Check if dirty (only if we were editing)
+  if (EDIT_DATA) {
+    const currentPayload = {
+      id: document.getElementById('p-id').value,
+      name: document.getElementById('p-name').value,
+      tagline: document.getElementById('p-tagline').value,
+      location: document.getElementById('p-location').value,
+      badge: document.getElementById('p-badge').value,
+      bedrooms: parseInt(document.getElementById('p-beds').value),
+      bathrooms: parseFloat(document.getElementById('p-baths').value),
+      capacity: parseInt(document.getElementById('p-cap').value),
+      priceTTD: document.getElementById('p-ttd').value || '$3200 - $3500 TTD',
+      description: document.getElementById('p-desc').value
+    };
+
+    const hasChanges = 
+      currentPayload.id !== EDIT_DATA.id ||
+      currentPayload.name !== EDIT_DATA.name ||
+      currentPayload.tagline !== (EDIT_DATA.tagline || '') ||
+      currentPayload.location !== EDIT_DATA.location ||
+      currentPayload.badge !== (EDIT_DATA.badge || '') ||
+      currentPayload.bedrooms !== (EDIT_DATA.bedrooms || 0) ||
+      currentPayload.bathrooms !== (EDIT_DATA.bathrooms || 0) ||
+      currentPayload.capacity !== (EDIT_DATA.capacity || 0) ||
+      currentPayload.priceTTD !== (EDIT_DATA.priceTTD || '') ||
+      currentPayload.description !== (EDIT_DATA.description || '');
+
+    if (hasChanges) {
+      showConfirmModal({
+        title: 'Discard Changes?',
+        msg: 'You have unsaved modifications to this property. Are you sure you want to cancel?',
+        icon: '⚠️',
+        onConfirm: () => resetForm(form)
+      });
+      return;
+    }
+  }
+
+  resetForm(form);
+}
+
+function resetForm(form) {
   form.reset();
   EDIT_DATA = null;
   document.getElementById('p-mode').value = 'create';
@@ -226,74 +304,100 @@ function initPropertyForm() {
     btn.disabled = true;
 
     try {
-      const fileInput = document.getElementById('p-image');
-      const files = Array.from(fileInput.files);
-      
-      let finalImage = EDIT_DATA ? EDIT_DATA.image : null;
-      let finalGallery = EDIT_DATA ? EDIT_DATA.gallery : [];
+      const mode = document.getElementById('p-mode').value;
+      const title = mode === 'update' ? 'Confirm Update' : 'Confirm Publication';
+      const msg = mode === 'update' ? 'Are you sure you want to save these changes to the property?' : 'Ready to publish this new property to the live catalog?';
+      const icon = mode === 'update' ? '✍️' : '🚀';
 
-      if (files.length > 0) {
-        const base64Images = [];
-        for (const file of files) {
-          btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
-          const base64 = await processImageFile(file);
-          base64Images.push(base64);
+      showConfirmModal({
+        title,
+        msg,
+        icon,
+        onConfirm: async () => {
+          btn.innerText = 'SYNCING...';
+          btn.disabled = true;
+
+          try {
+            const fileInput = document.getElementById('p-image');
+            const files = Array.from(fileInput.files);
+            
+            let finalImage = EDIT_DATA ? EDIT_DATA.image : null;
+            let finalGallery = EDIT_DATA ? EDIT_DATA.gallery : [];
+
+            if (files.length > 0) {
+              const base64Images = [];
+              for (const file of files) {
+                btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
+                const base64 = await processImageFile(file);
+                base64Images.push(base64);
+              }
+              finalImage = base64Images[0];
+              finalGallery = base64Images;
+            }
+
+            const payload = {
+              id: document.getElementById('p-id').value,
+              name: document.getElementById('p-name').value,
+              tagline: document.getElementById('p-tagline').value,
+              location: document.getElementById('p-location').value,
+              badge: document.getElementById('p-badge').value,
+              bedrooms: parseInt(document.getElementById('p-beds').value),
+              bathrooms: parseFloat(document.getElementById('p-baths').value),
+              capacity: parseInt(document.getElementById('p-cap').value),
+              priceTTD: document.getElementById('p-ttd').value || '$3200 - $3500 TTD',
+              image: finalImage,
+              description: document.getElementById('p-desc').value,
+              descriptionLong: document.getElementById('p-desc').value,
+              gallery: finalGallery
+            };
+
+            if (mode === 'update') {
+              const { error } = await supabase.from('properties').update(payload, 'id', EDIT_DATA.id);
+              if (error) throw error;
+              showToast('Property updated successfully!', '✅');
+            } else {
+              const { error } = await supabase.from('properties').insert(payload);
+              if (error) throw error;
+              showToast('New property published!', '🎉');
+            }
+            
+            resetForm(form);
+            fetchProperties();
+          } catch (err) {
+            console.error('Save error:', err);
+            showToast(err.message, '⚠️');
+          } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+          }
         }
-        finalImage = base64Images[0];
-        finalGallery = base64Images;
-      } else if (mode === 'create') {
-        throw new Error("At least one image is required for new properties.");
-      }
-
-      const payload = {
-        id: document.getElementById('p-id').value,
-        name: document.getElementById('p-name').value,
-        tagline: document.getElementById('p-tagline').value,
-        location: document.getElementById('p-location').value,
-        badge: document.getElementById('p-badge').value,
-        bedrooms: parseInt(document.getElementById('p-beds').value),
-        bathrooms: parseFloat(document.getElementById('p-baths').value),
-        capacity: parseInt(document.getElementById('p-cap').value),
-        priceTTD: document.getElementById('p-ttd').value || '$3200 - $3500 TTD',
-        image: finalImage,
-        description: document.getElementById('p-desc').value,
-        descriptionLong: document.getElementById('p-desc').value,
-        gallery: finalGallery
-      };
-
-      if (mode === 'update') {
-        const { error } = await supabase.from('properties').update(payload, 'id', EDIT_DATA.id);
-        if (error) throw error;
-        showToast('Property updated successfully!', '✅');
-      } else {
-        const { error } = await supabase.from('properties').insert(payload);
-        if (error) throw error;
-        showToast('New property published!', '🎉');
-      }
-      
-      form.reset();
-      cancelEditing();
-      fetchProperties();
+      });
     } catch (err) {
-      console.error('Save error:', err);
+      console.error('Validation error:', err);
       showToast(err.message, '⚠️');
-    } finally {
       btn.innerText = originalText;
       btn.disabled = false;
     }
   });
 }
 
+
 async function deleteProperty(id) {
-  if (!confirm(`Are you sure you want to delete ${id}? This action is permanent.`)) return;
-  try {
-    const { error } = await supabase.from('properties').delete('id', id);
-    if (error) throw error;
-    showToast('Property deleted successfully', '🗑️');
-    fetchProperties();
-  } catch (err) {
-    showToast('Delete error: ' + err.message, '⚠️');
-  }
+  showConfirmModal({
+    title: 'Delete Property?',
+    msg: `Are you sure you want to remove '${id}'? This action is permanent and cannot be reversed.`,
+    icon: '🗑️',
+    onConfirm: async () => {
+      try {
+        const { error } = await supabase.from('properties').delete('id', id);
+        if (error) throw error;
+        showToast('Property deleted successfully', '✅');
+        fetchProperties();
+      } catch (err) {
+        showToast('Delete error: ' + err.message, '⚠️');
+      }
+    }
+  });
 }
 
 /* ---------- Inquiries ---------- */
@@ -391,15 +495,22 @@ function closeModal() {
 }
 
 async function updateStatus(id, newStatus) {
-  if (!confirm(`Confirm status change to ${newStatus}?`)) return;
-  try {
-    const { data, error } = await supabase.from('bookings').update({ status: newStatus }, 'id', id);
-    if (error) throw error;
-    closeModal();
-    fetchBookings();
-  } catch (err) {
-    console.error('Update error:', err);
-    alert('Failed to update.');
-  }
+  showConfirmModal({
+    title: 'Change Status?',
+    msg: `Set inquiry #${id} to ${newStatus}?`,
+    icon: '📊',
+    onConfirm: async () => {
+      try {
+        const { data, error } = await supabase.from('bookings').update({ status: newStatus }, 'id', id);
+        if (error) throw error;
+        showToast(`Status updated to ${newStatus}`, '✅');
+        closeModal();
+        fetchBookings();
+      } catch (err) {
+        console.error('Update error:', err);
+        showToast('Failed to update status', '⚠️');
+      }
+    }
+  });
 }
 
