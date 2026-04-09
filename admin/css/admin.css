@@ -145,33 +145,36 @@ h1, h2, h3, h4 {
 /* ---------- Main: Airy & Luxury ---------- */
 .admin-main {
   flex-grow: 1;
-  display: flex; flex-direction: column;
+  display: flex; 
+  flex-direction: column;
+  min-width: 0; /* Critical for preventing flex items from breaking overflow */
 }
 
 .admin-header {
-  height: 90px; 
+  height: 80px; 
   background: rgba(255,255,255,0.9);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between; 
-  padding: 0 50px;
+  padding: 0 5%; /* Fluid padding */
   position: sticky; top: 0; z-index: 90;
 }
 
 .admin-header h1 { 
-  font-size: 1.6rem; 
+  font-size: 1.4rem; 
   letter-spacing: -0.01em; 
 }
 
 .admin-user { 
-  font-size: 0.7rem; font-weight: 800; 
+  font-size: 0.65rem; font-weight: 800; 
   text-transform: uppercase; letter-spacing: 0.2em; 
   color: var(--accent); 
+  white-space: nowrap;
 }
 
 .admin-content { 
-  padding: 50px; 
+  padding: 30px 5%; /* Responsive padding */
   max-width: 1400px; 
   width: 100%;
   margin: 0 auto;
@@ -233,9 +236,11 @@ h1, h2, h3, h4 {
 .admin-panel { 
   background: #fff; 
   border-radius: 24px; 
-  padding: 40px; 
+  padding: clamp(20px, 5%, 40px); /* Smart adaptive padding */
   box-shadow: 0 10px 40px rgba(0,0,0,0.03);
   border: 1px solid var(--border);
+  width: 100%;
+  overflow: hidden; /* Prevent children from breaking out */
 }
 
 .panel-header { 
@@ -338,11 +343,13 @@ tr:hover td { background: rgba(225,29,72,0.01); }
 .modal-overlay.active { opacity: 1; pointer-events: all; }
 
 .modal-content {
-  background: #fff; width: 100%; max-width: 700px; 
-  padding: 50px; border-radius: 32px;
+  background: #fff; width: 90%; max-width: 700px; 
+  padding: clamp(20px, 5vw, 50px); border-radius: 32px;
   transform: scale(0.95) translateY(20px); 
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+  max-height: 90vh; /* Don't grow larger than viewport */
+  overflow-y: auto; /* Allow scrolling inside modal */
 }
 
 .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
@@ -579,10 +586,14 @@ tr:hover td { background: rgba(225,29,72,0.01); }
     padding: 10px 15px;
     z-index: 1000;
   }
-  .sidebar-logo { border: none; padding: 5px; }
-  .brand-logo { height: 40px !important; width: 40px !important; padding: 5px !important; }
-  .sidebar-nav { padding: 0; flex-direction: row; gap: 5px; align-items: center; }
-  .sidebar-nav a { padding: 12px; border-bottom: 3px solid transparent; }
+  .sidebar-logo { border: none; padding: 5px; width: auto; }
+  .brand-container { flex-direction: row; gap: 8px; align-items: center; width: auto; }
+  .brand-info { display: flex !important; align-items: flex-start; }
+  .brand-tagline { display: none; }
+  .brand-title { font-size: 0.85rem; }
+  .brand-logo { height: 35px !important; width: 35px !important; padding: 4px !important; }
+  .sidebar-nav { padding: 0; flex-direction: row; gap: 2px; align-items: center; }
+  .sidebar-nav a { padding: 10px 12px; border-bottom: 3px solid transparent; font-size: 0.65rem; }
   .sidebar-nav a.active { border-bottom-color: var(--accent); background: transparent; }
   .sidebar-nav div { display: none; } /* Hide live-site/logout group in main nav row */
   
