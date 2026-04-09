@@ -558,38 +558,70 @@ tr:hover td { background: rgba(225,29,72,0.01); }
 }
 
 /* ---------- RESPONSIVENESS ---------- */
+
+/* Desktop / Large Tablets */
 @media (max-width: 1024px) {
-  .admin-sidebar { width: 80px; padding: 30px 10px; }
-  .sidebar-links a span, .sidebar-brand .brand-info, .logout-btn span { display: none; }
-  .sidebar-links a { justify-content: center; padding: 15px; }
-  .admin-content { margin-left: 80px; }
+  .admin-sidebar { width: 80px; padding: 20px 10px; }
+  .sidebar-nav a span, .brand-info, .logout-btn span { display: none; }
+  .sidebar-nav a { justify-content: center; padding: 15px; border-right: none; }
+  .admin-main { margin-left: 0; }
+  .admin-layout { flex-direction: row; }
 }
 
+/* Tablets & Large Phones */
 @media (max-width: 768px) {
-  .admin-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-  .stats-grid { grid-template-columns: 1fr; }
-  .cards-grid { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr; }
-  .admin-table { display: block; overflow-x: auto; }
-  .sidebar-brand .brand-logo { width: 35px; height: 35px; }
   .admin-layout { flex-direction: column; }
   .admin-sidebar { 
     width: 100%; height: auto; 
-    position: relative; 
+    position: sticky; top: 0;
     flex-direction: row; 
     justify-content: space-between;
-    padding: 10px 20px;
+    padding: 10px 15px;
+    z-index: 1000;
   }
-  .sidebar-logo { border: none; padding: 10px; }
-  .sidebar-nav { padding: 0; flex-direction: row; }
-  .sidebar-nav a { padding: 15px; border-right: none; border-bottom: 3px solid transparent; }
+  .sidebar-logo { border: none; padding: 5px; }
+  .brand-logo { height: 40px !important; width: 40px !important; padding: 5px !important; }
+  .sidebar-nav { padding: 0; flex-direction: row; gap: 5px; align-items: center; }
+  .sidebar-nav a { padding: 12px; border-bottom: 3px solid transparent; }
   .sidebar-nav a.active { border-bottom-color: var(--accent); background: transparent; }
-  .admin-main { min-height: calc(100vh - 80px); }
-  .admin-content { padding: 25px; }
-  .stats-grid { grid-template-columns: 1fr; }
-  .quick-actions { grid-template-columns: 1fr; }
-  .modal-content { padding: 30px; border-radius: 20px; }
-  .modal-body { grid-template-columns: 1fr; }
+  .sidebar-nav div { display: none; } /* Hide live-site/logout group in main nav row */
+  
+  .admin-header { height: auto; padding: 20px; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+  .admin-content { padding: 15px; }
+  .admin-panel { padding: 25px; border-radius: 16px; }
+  .panel-header h2 { font-size: 1.4rem; }
+  
+  .stats-grid { grid-template-columns: 1fr; gap: 15px; }
+  .form-grid { grid-template-columns: 1fr; gap: 15px; }
+  
+  .confirm-modal { padding: 30px 20px; margin: 0 15px; }
+  .confirm-actions { flex-direction: column; }
+  .confirm-btn-primary, .confirm-btn-secondary { width: 100%; }
+}
+
+/* Small Phones / Legacy Devices */
+@media (max-width: 480px) {
+  .brand-title { font-size: 0.8rem; }
+  .admin-header h1 { font-size: 1.2rem; }
+  .stat-card { padding: 25px; }
+  .stat-card .val { font-size: 2rem; }
+  .btn { width: 100%; text-align: center; }
+  
+  /* Make table readable via scrolling indicator */
+  .table-responsive {
+    position: relative;
+  }
+  .table-responsive::after {
+    content: 'Scroll →';
+    position: absolute;
+    right: 10px; top: 10px;
+    font-size: 0.6rem;
+    color: var(--text-light);
+    pointer-events: none;
+  }
+  
+  .toast-container { width: 90%; padding: 30px 20px; }
+  .toast-msg { font-size: 1rem; }
 }
 
 /* Animations */
