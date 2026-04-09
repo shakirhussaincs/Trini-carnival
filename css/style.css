@@ -1485,3 +1485,55 @@ a:hover {
   background: #ffcccc;
   border: 1px solid #ea9a9a;
 }
+
+/* ---------- RESPONSIVENESS ---------- */
+@media (max-width: 1024px) {
+  .container { padding: 0 2.5rem; }
+  h1 { font-size: clamp(3rem, 6vw, 4.5rem); }
+  h2 { font-size: clamp(2rem, 5vw, 3rem); }
+  .header .container { padding: 0 2rem; }
+}
+
+@media (max-width: 768px) {
+  :root { --header-h: 80px; }
+  h1 { font-size: clamp(2.5rem, 8vw, 3.5rem); }
+  h2 { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+  .nav-links {
+    position: fixed;
+    top: var(--header-h);
+    left: 0;
+    width: 100%;
+    height: calc(100vh - var(--header-h));
+    background: #fff;
+    flex-direction: column;
+    padding: 60px 40px;
+    gap: 2.5rem;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+  }
+  .nav-links.active { transform: translateX(0); opacity: 1; visibility: visible; }
+  .mobile-toggle { display: flex !important; pointer-events: auto !important; }
+  .properties-grid, .villa-grid-ref { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero-content { padding: 0 20px; }
+  .summary-bar { flex-direction: column; gap: 20px; align-items: flex-start; padding: 30px; }
+  .section { padding: 60px 0; }
+  .brand-title { font-size: 1.3rem; }
+}
+
+body.nav-active { overflow: hidden; }
+
+.mobile-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.mobile-toggle.active span:nth-child(2) { opacity: 0; }
+.mobile-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+@media (max-width: 480px) {
+  h1 { font-size: 2.3rem; }
+  .hero-content div { flex-direction: column; width: 100%; gap: 15px !important; }
+  .btn { width: 100%; text-align: center; font-size: 0.8rem; padding: 1rem; }
+  .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+}

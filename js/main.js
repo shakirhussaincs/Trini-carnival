@@ -251,6 +251,7 @@ function initGlobalHeader() {
     mobileToggle.addEventListener('click', () => {
       navLinks.classList.toggle('active');
       mobileToggle.classList.toggle('active');
+      document.body.classList.toggle('nav-active');
     });
   }
 

@@ -191,14 +191,20 @@ h1, h2, h3, h4 {
   padding: 35px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.02);
   border: 1px solid var(--border);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.07);
+  border-color: var(--accent);
+}
+
+.stat-card:active {
+  transform: translateY(-4px);
 }
 
 .stat-card h3 { 
@@ -391,26 +397,62 @@ tr:hover td { background: rgba(225,29,72,0.01); }
 }
 
 .icon-circle {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  border: 2px solid var(--primary);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-.icon-circle svg { width: 24px; height: 24px; stroke-width: 2; }
+.icon-estate { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+.icon-inquiry { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.icon-site { background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); }
+
+.action-card:hover .icon-circle {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
 
 .action-card span {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-dark);
+}
+
+/* ---------- Responsiveness ---------- */
+@media (max-width: 1024px) {
+  --sidebar-w: 80px;
+  .brand-info, .sidebar-nav span { display: none; }
+  .sidebar-nav a { justify-content: center; padding: 20px; }
+  .sidebar-nav a svg { width: 24px; height: 24px; }
+  .admin-header { padding: 0 30px; }
+}
+
+@media (max-width: 768px) {
+  .admin-layout { flex-direction: column; }
+  .admin-sidebar { 
+    width: 100%; height: auto; 
+    position: relative; 
+    flex-direction: row; 
+    justify-content: space-between;
+    padding: 10px 20px;
+  }
+  .sidebar-logo { border: none; padding: 10px; }
+  .sidebar-nav { padding: 0; flex-direction: row; }
+  .sidebar-nav a { padding: 15px; border-right: none; border-bottom: 3px solid transparent; }
+  .sidebar-nav a.active { border-bottom-color: var(--accent); background: transparent; }
+  .admin-main { min-height: calc(100vh - 80px); }
+  .admin-content { padding: 25px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: 1fr; }
+  .modal-content { padding: 30px; border-radius: 20px; }
+  .modal-body { grid-template-columns: 1fr; }
 }
 
 /* Animations */

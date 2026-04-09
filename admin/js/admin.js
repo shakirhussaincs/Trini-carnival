@@ -30,21 +30,25 @@ async function fetchStats() {
     const grid = document.getElementById('stats-grid');
     if (grid) {
       grid.innerHTML = `
-        <div class="stat-card">
+        <div class="stat-card" onclick="window.location.href='/admin/properties.html'">
           <h3>Total Estates</h3>
           <div class="val">${totalProperties}</div>
+          <div style="font-size: 0.7rem; color: var(--accent); margin-top: 10px; font-weight: 700;">BROWSE ALL &rarr;</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="window.location.href='/admin/bookings.html'">
           <h3>All Inquiries</h3>
           <div class="val">${totalBookings}</div>
+          <div style="font-size: 0.7rem; color: var(--accent); margin-top: 10px; font-weight: 700;">VIEW HISTORY &rarr;</div>
         </div>
-        <div class="stat-card stat-accent">
+        <div class="stat-card stat-accent" onclick="window.location.href='/admin/bookings.html?filter=Pending'">
           <h3>Pending Review</h3>
           <div class="val">${pendingBookings}</div>
+          <div style="font-size: 0.7rem; color: var(--accent); margin-top: 10px; font-weight: 700;">ACT NOW &rarr;</div>
         </div>
-        <div class="stat-card" style="border-top-color: var(--status-approved)">
+        <div class="stat-card" style="border-left: 4px solid var(--status-approved)" onclick="window.location.href='/admin/bookings.html?filter=Approved'">
           <h3>Approved</h3>
           <div class="val">${approvedBookings}</div>
+          <div style="font-size: 0.7rem; color: var(--status-approved); margin-top: 10px; font-weight: 700;">CHECK GUESTS &rarr;</div>
         </div>
       `;
     }
@@ -66,12 +70,17 @@ async function fetchProperties() {
     tbody.innerHTML = (data || []).map(p => `
       <tr>
         <td><code>${p.id}</code></td>
-        <td><strong>${p.name}</strong></td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="${p.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; background: #eee;" onerror="this.src='/images/logo.png'">
+            <strong>${p.name}</strong>
+          </div>
+        </td>
         <td>${p.location}</td>
         <td>${p.bedrooms} Beds</td>
         <td>${p.capacity}</td>
         <td>
-          <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected);" onclick="deleteProperty('${p.id}')">Delete</button>
+          <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected); padding: 5px 10px; font-size: 0.6rem;" onclick="deleteProperty('${p.id}')">Delete</button>
         </td>
       </tr>
     `).join('');
@@ -108,13 +117,30 @@ const processImageFile = (file, maxWidth = 1200) => {
   });
 };
 
+window.previewImages = () => {
+  const container = document.getElementById('image-preview-container');
+  const files = Array.from(document.getElementById('p-image').files);
+  container.innerHTML = '';
+  files.forEach(f => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const div = document.createElement('div');
+      div.style = 'width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--accent); position: relative;';
+      div.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+      container.appendChild(div);
+    };
+    reader.readAsDataURL(f);
+  });
+};
+
 function initPropertyForm() {
   const form = document.getElementById('add-property-form');
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button');
-    btn.innerText = 'PROCESSING IMAGES...';
+    const originalText = btn.innerText;
+    btn.innerText = 'PREPARING ASSETS...';
     btn.disabled = true;
 
     try {
@@ -124,11 +150,12 @@ function initPropertyForm() {
       
       const base64Images = [];
       for (const file of files) {
+        btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
         const base64 = await processImageFile(file);
         base64Images.push(base64);
       }
 
-      btn.innerText = 'PUBLISHING...';
+      btn.innerText = 'SYNCING TO SUPABASE...';
 
       const payload = {
         id: document.getElementById('p-id').value,
@@ -139,7 +166,7 @@ function initPropertyForm() {
         bedrooms: parseInt(document.getElementById('p-beds').value),
         bathrooms: parseFloat(document.getElementById('p-baths').value),
         capacity: parseInt(document.getElementById('p-cap').value),
-        priceTTD: document.getElementById('p-ttd').value,
+        priceTTD: document.getElementById('p-ttd').value || '$3200 - $3500 TTD',
         image: base64Images[0],
         description: document.getElementById('p-desc').value,
         descriptionLong: document.getElementById('p-desc').value,
@@ -147,16 +174,18 @@ function initPropertyForm() {
         amenities: []
       };
 
-      const { data, error } = await supabase.from('properties').insert(payload);
+      const { error } = await supabase.from('properties').insert(payload);
       if (error) throw error;
-      alert('Estate Published Successfully');
+      
+      alert('Property has been seamlessly integrated into your collection!');
       form.reset();
+      document.getElementById('image-preview-container').innerHTML = '';
       fetchProperties();
     } catch (err) {
       console.error('Save error:', err);
-      alert('Error saving property: ' + err.message);
+      alert('Database integration error: ' + err.message);
     } finally {
-      btn.innerText = 'PUBLISH ESTATE';
+      btn.innerText = originalText;
       btn.disabled = false;
     }
   });
@@ -187,11 +216,18 @@ async function fetchBookings() {
     const propMap = {};
     if (properties) properties.forEach(p => propMap[p.id] = p.name);
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const statusFilter = urlParams.get('filter');
+
     ALL_BOOKINGS = (bookings || []).map(b => ({
       ...b,
       propertyName: propMap[b.propertyId] || b.propertyId || 'Unknown'
-    }));
+    })).filter(b => !statusFilter || b.status === statusFilter);
     
+    // Update header title if filter is active
+    const headerH1 = document.querySelector('.admin-header h1');
+    if (statusFilter && headerH1) headerH1.textContent = `${statusFilter} Inquiries`;
+
     renderBookings();
   } catch (err) {
     console.error('Bookings error:', err);
