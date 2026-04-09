@@ -22,7 +22,6 @@
     <aside class="admin-sidebar" id="sidebar">
       <div class="sidebar-logo">
         <a href="/admin/index.html" class="brand-container">
-          <img src="/images/logo.png" alt="Trini Carnival" class="brand-logo">
           <div class="brand-info">
             <div class="brand-title">TRINI CARNIVAL</div>
             <div class="brand-tagline">VILLA RENTALS</div>
@@ -114,8 +113,10 @@
                 <textarea id="p-desc" rows="3"></textarea>
               </div>
             </div>
-            <div style="margin-top: 30px; text-align: right;">
-              <button type="submit" class="btn btn-primary">Publish Estate</button>
+            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: flex-end;">
+              <input type="hidden" id="p-mode" value="create">
+              <button type="button" id="cancel-edit" class="btn btn-outline" style="display:none;" onclick="cancelEditing()">Cancel Edit</button>
+              <button type="submit" id="submit-btn" class="btn btn-primary">Publish Estate</button>
             </div>
           </form>
         </div>
@@ -149,5 +150,13 @@
 
 <script src="/js/supabaseClient.js"></script>
 <script src="/admin/js/admin.js"></script>
+
+<!-- Custom Toast Notification -->
+<div class="toast-overlay" id="toast-overlay"></div>
+<div class="toast-container" id="toast-container">
+  <span class="toast-icon" id="toast-icon">✨</span>
+  <p class="toast-msg" id="toast-msg">Success!</p>
+</div>
+
 </body>
 </html>

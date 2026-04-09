@@ -84,7 +84,10 @@ async function fetchProperties() {
         <td>${p.bedrooms} Beds</td>
         <td>${p.capacity}</td>
         <td>
-          <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected); padding: 5px 10px; font-size: 0.6rem;" onclick="deleteProperty('${p.id}')">Delete</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline" style="color:var(--accent); border-color:var(--accent); padding: 5px 10px; font-size: 0.6rem;" onclick="editProperty('${p.id}')">Edit</button>
+            <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected); padding: 5px 10px; font-size: 0.6rem;" onclick="deleteProperty('${p.id}')">Delete</button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -137,29 +140,110 @@ window.previewImages = () => {
   });
 };
 
+function showToast(msg, icon = '✨') {
+  const overlay = document.getElementById('toast-overlay');
+  const container = document.getElementById('toast-container');
+  const msgEl = document.getElementById('toast-msg');
+  const iconEl = document.getElementById('toast-icon');
+
+  if (!container) {
+    alert(msg); // Fallback
+    return;
+  }
+
+  msgEl.textContent = msg;
+  iconEl.textContent = icon;
+  overlay.classList.add('active');
+  container.classList.add('active');
+
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    container.classList.remove('active');
+  }, 3000);
+}
+
+let EDIT_DATA = null;
+
+async function editProperty(id) {
+  try {
+    const { data, error } = await supabase.from('properties').selectWhere('id', id);
+    if (error) throw error;
+    if (!data || data.length === 0) return;
+    
+    const p = data[0];
+    EDIT_DATA = p;
+    
+    // Fill form
+    document.getElementById('p-id').value = p.id;
+    document.getElementById('p-name').value = p.name;
+    document.getElementById('p-tagline').value = p.tagline || '';
+    document.getElementById('p-location').value = p.location;
+    document.getElementById('p-badge').value = p.badge || '';
+    document.getElementById('p-beds').value = p.bedrooms;
+    document.getElementById('p-baths').value = p.bathrooms;
+    document.getElementById('p-cap').value = p.capacity;
+    document.getElementById('p-ttd').value = p.priceTTD || '';
+    document.getElementById('p-desc').value = p.description || '';
+    
+    // Preview image
+    const preview = document.getElementById('image-preview-container');
+    preview.innerHTML = `<div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--accent);"><img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover;"></div>`;
+    
+    // Change UI mode
+    document.getElementById('p-mode').value = 'update';
+    document.getElementById('submit-btn').innerText = 'SAVE CHANGES';
+    document.getElementById('cancel-edit').style.display = 'inline-block';
+    document.querySelector('.panel-header h2').innerText = 'Editing: ' + p.name;
+    
+    // Scroll to form
+    document.querySelector('.admin-panel').scrollIntoView({ behavior: 'smooth' });
+    
+  } catch (err) {
+    showToast('Failed to load property data', '⚠️');
+  }
+}
+
+function cancelEditing() {
+  const form = document.getElementById('add-property-form');
+  form.reset();
+  EDIT_DATA = null;
+  document.getElementById('p-mode').value = 'create';
+  document.getElementById('submit-btn').innerText = 'PUBLISH ESTATE';
+  document.getElementById('cancel-edit').style.display = 'none';
+  document.querySelector('.panel-header h2').innerText = 'Add New Property';
+  document.getElementById('image-preview-container').innerHTML = '';
+}
+
 function initPropertyForm() {
   const form = document.getElementById('add-property-form');
   if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = form.querySelector('button');
+    const mode = document.getElementById('p-mode').value;
+    const btn = document.getElementById('submit-btn');
     const originalText = btn.innerText;
-    btn.innerText = 'PREPARING ASSETS...';
+    btn.innerText = 'PROCESSING...';
     btn.disabled = true;
 
     try {
       const fileInput = document.getElementById('p-image');
       const files = Array.from(fileInput.files);
-      if (files.length === 0) throw new Error("At least one image is required.");
       
-      const base64Images = [];
-      for (const file of files) {
-        btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
-        const base64 = await processImageFile(file);
-        base64Images.push(base64);
-      }
+      let finalImage = EDIT_DATA ? EDIT_DATA.image : null;
+      let finalGallery = EDIT_DATA ? EDIT_DATA.gallery : [];
 
-      btn.innerText = 'SYNCING TO SUPABASE...';
+      if (files.length > 0) {
+        const base64Images = [];
+        for (const file of files) {
+          btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
+          const base64 = await processImageFile(file);
+          base64Images.push(base64);
+        }
+        finalImage = base64Images[0];
+        finalGallery = base64Images;
+      } else if (mode === 'create') {
+        throw new Error("At least one image is required for new properties.");
+      }
 
       const payload = {
         id: document.getElementById('p-id').value,
@@ -171,23 +255,28 @@ function initPropertyForm() {
         bathrooms: parseFloat(document.getElementById('p-baths').value),
         capacity: parseInt(document.getElementById('p-cap').value),
         priceTTD: document.getElementById('p-ttd').value || '$3200 - $3500 TTD',
-        image: base64Images[0],
+        image: finalImage,
         description: document.getElementById('p-desc').value,
         descriptionLong: document.getElementById('p-desc').value,
-        gallery: base64Images,
-        amenities: []
+        gallery: finalGallery
       };
 
-      const { error } = await supabase.from('properties').insert(payload);
-      if (error) throw error;
+      if (mode === 'update') {
+        const { error } = await supabase.from('properties').update(payload, 'id', EDIT_DATA.id);
+        if (error) throw error;
+        showToast('Property updated successfully!', '✅');
+      } else {
+        const { error } = await supabase.from('properties').insert(payload);
+        if (error) throw error;
+        showToast('New property published!', '🎉');
+      }
       
-      alert('Property has been seamlessly integrated into your collection!');
       form.reset();
-      document.getElementById('image-preview-container').innerHTML = '';
+      cancelEditing();
       fetchProperties();
     } catch (err) {
       console.error('Save error:', err);
-      alert('Database integration error: ' + err.message);
+      showToast(err.message, '⚠️');
     } finally {
       btn.innerText = originalText;
       btn.disabled = false;
@@ -200,9 +289,10 @@ async function deleteProperty(id) {
   try {
     const { error } = await supabase.from('properties').delete('id', id);
     if (error) throw error;
+    showToast('Property deleted successfully', '🗑️');
     fetchProperties();
   } catch (err) {
-    alert('Delete error: ' + err.message);
+    showToast('Delete error: ' + err.message, '⚠️');
   }
 }
 
