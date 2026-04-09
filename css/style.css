@@ -256,7 +256,7 @@ a:hover {
 
 .nav-links {
   display: flex;
-  gap: 3.5rem;
+  gap: 2.5rem;
   align-items: center;
 }
 
@@ -291,7 +291,27 @@ a:hover {
 }
 
 .nav-links a:hover {
-  color: var(--accent);
+  color: var(--accent-red);
+}
+
+/* Premium 'Book Now' CTA Button in Nav */
+.nav-links a[href="book.html"] {
+  background: var(--accent-red);
+  color: #fff !important;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+  transition: all var(--transition);
+}
+
+.nav-links a[href="book.html"]::after { display: none; }
+
+.nav-links a[href="book.html"]:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(225, 29, 72, 0.4);
 }
 
 /* ---------- DROPDOWN SYSTEM ---------- */

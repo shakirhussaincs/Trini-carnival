@@ -4,9 +4,13 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname;
-  if (path.endsWith('index.html') || path.endsWith('/admin/')) fetchStats();
-  if (path.endsWith('bookings.html')) fetchBookings();
-  if (path.endsWith('properties.html')) {
+  
+  // Robust check for Admin Dashboard root (handles /admin, /admin/, /admin/index.html)
+  const isDashboard = path.endsWith('/admin') || path.endsWith('/admin/') || path.endsWith('admin/index.html');
+  
+  if (isDashboard) fetchStats();
+  if (path.includes('bookings.html')) fetchBookings();
+  if (path.includes('properties.html')) {
     fetchProperties();
     initPropertyForm();
   }
