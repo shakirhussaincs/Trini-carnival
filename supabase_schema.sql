@@ -50,6 +50,9 @@ CREATE POLICY "Allow public read on properties" ON properties FOR SELECT USING (
 CREATE POLICY "Allow public insert on bookings" ON bookings FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow public read on bookings" ON bookings FOR SELECT USING (true);
 CREATE POLICY "Allow public update on bookings" ON bookings FOR UPDATE USING (true);
+CREATE POLICY "Allow public insert on properties" ON properties FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update on properties" ON properties FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete on properties" ON properties FOR DELETE USING (true);
 
 -- 5. Seed all properties
 INSERT INTO properties (id, name, tagline, location, bedrooms, bathrooms, capacity, "bedroomDetail", "priceTTD", "priceUSD", badge, pricing_note, image, gallery, description, "descriptionLong", amenities, "bedroomLayout") VALUES
