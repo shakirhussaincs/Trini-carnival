@@ -353,23 +353,17 @@ function initDropdownInjections() {
     const topLoc = sorted[0] ? sorted[0][0] : ALL_LOCATIONS[0];
     const topProp = PROPERTIES.find(p => p.location === topLoc);
 
-    locationsDropdown.innerHTML = `
-      <div class="mega-links" style="grid-column: 1 / span 2; padding: 40px; background: #fff;">
-        <h5>Explore Our Destinations</h5>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: x 40px; gap: y 10px; margin-top: 20px;">
-          ${ALL_LOCATIONS.map(loc => `
-            <a href="location.html?place=${encodeURIComponent(loc)}" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(0,0,0,0.03); padding: 12px 0; transition: var(--transition);">
-              <span style="font-weight: 500;">${escapeHTML(loc)}</span>
-              <span style="font-size: 0.6rem; font-weight:800; opacity:0.6; color: var(--accent);">${counts[loc]} PROPERTIES</span>
-            </a>
-          `).join('')}
-        </div>
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-          <p style="font-size: 0.75rem; color: var(--text-gray);">Discover high-end rentals across Tobago's most prestigious districts.</p>
-          <a href="villas.html" class="view-all-link">VIEW ENTIRE PORTFOLIO &rarr;</a>
-        </div>
-      </div>
-    `;
+  if (locationsDropdown) {
+    locationsDropdown.classList.remove('dropdown-mega');
+    locationsDropdown.innerHTML = '<div class="dropdown-header">Explore Regions</div>';
+    if (ALL_LOCATIONS.length > 10) locationsDropdown.classList.add('dropdown-scrollable');
+    
+    ALL_LOCATIONS.forEach(loc => {
+      const a = document.createElement('a');
+      a.href = `location.html?place=${encodeURIComponent(loc)}`;
+      a.textContent = loc;
+      locationsDropdown.appendChild(a);
+    });
   }
 }
 
