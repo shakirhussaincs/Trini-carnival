@@ -83,9 +83,14 @@ async function fetchProperties() {
     const { data, error } = await supabase.from('properties').select('*');
     if (error) throw error;
 
-    tbody.innerHTML = (data || []).map(p => `
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 50px;">No properties found. <a href="#" onclick="fetchProperties()">Refresh?</a></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(p => `
       <tr>
-        <td><code>${escapeHTML(p.id)}</code></td>
+        <td><code>#${escapeHTML(p.id.toString().slice(0, 8))}</code></td>
         <td>
           <div style="display: flex; align-items: center; gap: 15px;">
             <img src="${p.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; background: #eee;" onerror="this.src='/images/logo.png'">
@@ -94,11 +99,11 @@ async function fetchProperties() {
         </td>
         <td>${escapeHTML(p.location)}</td>
         <td>${escapeHTML(p.bedrooms)} Beds</td>
-        <td>${escapeHTML(p.capacity)}</td>
+        <td>${escapeHTML(p.capacity)} Guests</td>
         <td>
           <div style="display: flex; gap: 8px;">
             <button class="btn btn-outline" style="color:var(--accent); border-color:var(--accent); padding: 5px 10px; font-size: 0.6rem;" onclick="editProperty('${p.id}')">Edit</button>
-            <button class="btn btn-outline" style="color:var(--status-rejected); border-color:var(--status-rejected); padding: 5px 10px; font-size: 0.6rem;" onclick="deleteProperty('${p.id}')">Delete</button>
+            <button class="btn btn-outline" style="color:#ef4444; border-color:#ef4444; padding: 5px 10px; font-size: 0.6rem;" onclick="deleteProperty('${p.id}')">Delete</button>
           </div>
         </td>
       </tr>

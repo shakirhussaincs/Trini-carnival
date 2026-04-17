@@ -33,38 +33,38 @@ function renderPropertyCard(property) {
   return `
     <a href="property.html?id=${property.id}" class="v-card-ref" data-reveal>
       <div class="v-card-img-box">
-        <img src="${property.image}" alt="${property.name}" loading="lazy">
+        <img src="${property.image}" alt="${escapeHTML(property.name)}" loading="lazy" onerror="this.src='/images/logo.png'">
         <div class="v-card-fade"></div>
       </div>
       
       <div class="v-card-icons">
         <div class="v-icon-col">
           <svg viewBox="0 0 24 24"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8M4 10V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v2M12 10v10M2 17h20"/></svg>
-          <div class="v-label">${property.bedrooms}</div>
+          <div class="v-label">${escapeHTML(property.bedrooms)}</div>
         </div>
         <div class="v-divider"></div>
         <div class="v-icon-col">
           <svg viewBox="0 0 24 24"><path d="M9 6h7a2 2 0 0 1 2 2v5l-1.5 2H11l-1.5-2V8a2 2 0 0 1 2-2zM4 11h16a2 2 0 0 1 2 2v2a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-2a2 2 0 0 1 2-2z"/></svg>
-          <div class="v-label">${property.bathrooms}</div>
+          <div class="v-label">${escapeHTML(property.bathrooms)}</div>
         </div>
         <div class="v-divider"></div>
         <div class="v-icon-col">
           <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="17" cy="11" r="3"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
-          <div class="v-label">${property.capacity}</div>
+          <div class="v-label">${escapeHTML(property.capacity)}</div>
         </div>
         <div class="v-divider"></div>
         <div class="v-price-col">
-          <div class="ttd-price">${property.priceTTD || 'Price on Inquiry'} TTD</div>
-          <div class="usd-price">${property.priceUSD || (property.priceTTD ? '$' + Math.round(parseInt(property.priceTTD.replace(/[^0-9]/g, '') || 0)/6.8) + ' USD' : 'Bespoke Pricing')}</div>
+          <div class="ttd-price">${escapeHTML(property.priceTTD) || 'Price on Inquiry'} TTD</div>
+          <div class="usd-price">${escapeHTML(property.priceUSD) || (property.priceTTD ? '$' + Math.round(parseInt(property.priceTTD.replace(/[^0-9]/g, '') || 0)/6.8) + ' USD' : 'Bespoke Pricing')}</div>
         </div>
       </div>
 
       <div class="v-card-footer">
         <div class="v-footer-content">
-          <h3 class="v-title">${property.name}</h3>
+          <h3 class="v-title">${escapeHTML(property.name)}</h3>
           <div class="v-location">
             <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="3"/></svg>
-            ${property.location}
+            ${escapeHTML(property.location)}
           </div>
         </div>
         <div class="v-bracket-left"></div>
@@ -138,7 +138,10 @@ async function fetchPropertyDetails(id) {
     // Inject Hero
     const heroBg = document.getElementById('hero-bg-img');
     const heroName = document.getElementById('villa-name-main');
-    if (heroBg) heroBg.style.backgroundImage = `url('${prop.image}')`;
+    if (heroBg) {
+      heroBg.style.backgroundImage = `url('${prop.image}')`;
+      heroBg.onerror = () => heroBg.style.backgroundImage = "url('/images/hero.jpg')";
+    }
     if (heroName) heroName.textContent = escapeHTML(prop.name);
 
     // Inject Pricing
@@ -310,10 +313,6 @@ function initDropdownInjections() {
     villasDropdown.classList.remove('dropdown-scrollable');
     villasDropdown.classList.add('dropdown-mega');
     villasDropdown.innerHTML = `
-      <div class="mega-gallery">
-        <h5>Spotlight Collection</h5>
-        <div class="mega-grid" id="mega-gallery-grid"></div>
-      </div>
       <div class="mega-links">
         <h5>Discover By Size</h5>
         <a href="villas.html?filter=2">Two Bedroom Retreats</a>
@@ -324,6 +323,10 @@ function initDropdownInjections() {
         <h5 style="margin-top:20px;">Discovery</h5>
         <a href="location.html">Browse by Destination</a>
         <a href="villas.html" class="view-all-link">VIEW ALL PROPERTIES &rarr;</a>
+      </div>
+      <div class="mega-gallery">
+        <h5>Spotlight Collection</h5>
+        <div class="mega-grid" id="mega-gallery-grid"></div>
       </div>
     `;
 
@@ -341,29 +344,19 @@ function initDropdownInjections() {
   }
 
   if (locationsDropdown) {
-    locationsDropdown.classList.add('dropdown-mega');
-    locationsDropdown.classList.remove('dropdown-scrollable');
-
+    locationsDropdown.classList.remove('dropdown-mega');
+    
     // Count properties per location
     const counts = {};
     PROPERTIES.forEach(p => counts[p.location] = (counts[p.location] || 0) + 1);
 
-    // Spotlight: Top region
-    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
-    const topLoc = sorted[0] ? sorted[0][0] : ALL_LOCATIONS[0];
-    const topProp = PROPERTIES.find(p => p.location === topLoc);
+    if (ALL_LOCATIONS.length > 6) locationsDropdown.classList.add('dropdown-scrollable');
 
-  if (locationsDropdown) {
-    locationsDropdown.classList.remove('dropdown-mega');
-    locationsDropdown.innerHTML = '<div class="dropdown-header">Explore Regions</div>';
-    if (ALL_LOCATIONS.length > 10) locationsDropdown.classList.add('dropdown-scrollable');
-    
-    ALL_LOCATIONS.forEach(loc => {
-      const a = document.createElement('a');
-      a.href = `location.html?place=${encodeURIComponent(loc)}`;
-      a.textContent = loc;
-      locationsDropdown.appendChild(a);
-    });
+    locationsDropdown.innerHTML = `
+      <div class="dropdown-header">Explore Regions</div>
+      ${ALL_LOCATIONS.map(loc => `<a href="location.html?place=${encodeURIComponent(loc)}">${loc} (${counts[loc]})</a>`).join('')}
+      <a href="location.html" class="view-all-link" style="padding: 15px 30px; border-top: 1px solid var(--border);">ALL DESTINATIONS &rarr;</a>
+    `;
   }
 }
 
@@ -566,8 +559,15 @@ function initForms() {
 
       // Inquiry Submission logic — direct to Supabase
       if (form.id === 'booking-form') {
+        const propId = document.getElementById('property-select').value;
+        if (!propId) {
+          alert('Please select a property first.');
+          btn.innerHTML = originalText; btn.disabled = false;
+          return;
+        }
+
         const payload = {
-          propertyId: document.getElementById('property-select').value,
+          propertyId: propId,
           checkIn: document.getElementById('check-in').value,
           checkOut: document.getElementById('check-out').value,
           firstName: document.getElementById('fname').value,

@@ -216,8 +216,9 @@ a:hover {
   align-items: center;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 99999; /* Supreme layer to stay above all hero images and content */
   transition: all var(--transition);
 }
 
@@ -319,16 +320,28 @@ a:hover {
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateX(-50%) translateY(15px);
   background: #fff;
   min-width: 280px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.4s ease;
-  z-index: 1001;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  z-index: 100000; /* Must be higher than header */
   padding: 10px 0;
+  border-top: 3px solid var(--accent);
+}
+
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px; /* Reduced to avoid overlapping other menu items */
+  height: 20px;
+  background: transparent;
 }
 
 .nav-item:hover .dropdown-menu {
@@ -337,28 +350,36 @@ a:hover {
   transform: translateX(-50%) translateY(0);
 }
 
-/* High-End Gallery Dropdown */
+/* High-End Gallery Dropdown - Visual Mosaic */
 .dropdown-mega {
   min-width: 850px !important;
-  display: grid !important; /* Ensure grid is active */
-  grid-template-columns: 2fr 1fr;
+  display: grid !important; 
+  grid-template-columns: 1fr 2.2fr; /* List on left, Large grid on right */
   padding: 0 !important;
   border: none;
   box-shadow: 0 40px 100px rgba(0,0,0,0.15);
   border-radius: 12px;
   overflow: hidden;
-  left: 50%;
-  transform: translateX(-50%) translateY(0); /* Remove gap that causes flickering */
-  top: calc(100% - 10px); /* Slightly overlap for stability */
   border-top: 4px solid var(--accent);
+}
+/* Re-ensure positioning for the mega variant */
+.dropdown-mega.dropdown-menu {
+  left: 50%;
+  transform: translateX(-50%) translateY(15px);
+}
+.nav-item:hover .dropdown-mega.dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .dropdown-mega::before {
   content: '';
   position: absolute;
   top: -20px;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px; /* Bridge only over the link area */
   height: 20px;
   background: transparent;
 }
@@ -436,7 +457,7 @@ a:hover {
 .mega-links {
   background: var(--bg-light);
   padding: 30px;
-  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border); /* Changed from left to right */
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -489,9 +510,8 @@ a:hover {
   .mega-links { border-left: none; border-top: 1px solid var(--border); }
 }
 
-/* Scrollable dropdown for many villas (legacy/simple) */
 .dropdown-scrollable {
-  max-height: 450px;
+  max-height: 380px; /* Reduced for a more balanced look */
   overflow-y: auto;
 }
 
@@ -1283,7 +1303,7 @@ a:hover {
     align-items: flex-start;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
     transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1001;
+    z-index: 99999;
   }
 
   .nav-links.active {
