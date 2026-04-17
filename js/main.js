@@ -156,28 +156,25 @@ async function fetchPropertyDetails(id) {
       amenityList.innerHTML = amenities.map(a => `<li>${a}</li>`).join('');
     }
 
-    // Inject Large Feature Image
-    const featureImg = document.getElementById('main-feature-img');
-    if (featureImg) featureImg.src = prop.image;
-
-    // Inject Dense Gallery (Supabase returns JSONB as native arrays)
-    const galleryGrid = document.getElementById('gallery-dense-grid');
-    if (galleryGrid) {
+    // Inject Mosaic Gallery (1 Big + 4 Small)
+    const mosaicGrid = document.getElementById('villa-mosaic-grid');
+    if (mosaicGrid) {
       let gallery = [];
-      if (Array.isArray(prop.gallery)) {
-        gallery = prop.gallery;
-      } else if (typeof prop.gallery === 'string') {
+      if (Array.isArray(prop.gallery)) gallery = prop.gallery;
+      else if (typeof prop.gallery === 'string') {
         try { gallery = JSON.parse(prop.gallery); } catch(e) { gallery = []; }
       }
       
-      if (gallery.length > 0) {
-        galleryGrid.innerHTML = gallery.map(img => `
-          <div class="gallery-item">
-            <img src="${img}" alt="${prop.name} gallery" loading="lazy">
+      const allImages = [prop.image, ...gallery].filter(Boolean).slice(0, 5);
+      
+      if (allImages.length > 0) {
+        mosaicGrid.innerHTML = allImages.map((img, idx) => `
+          <div class="mosaic-item">
+            <img src="${img}" alt="${prop.name} ${idx}" loading="lazy">
           </div>
         `).join('');
       } else {
-        galleryGrid.innerHTML = '<p style="grid-column: 1/-1; opacity:0.5; padding:40px;">Detailed gallery views arriving soon.</p>';
+        mosaicGrid.innerHTML = '<p style="grid-column: 1/-1; opacity:0.5; padding:40px;">Professional gallery arriving soon.</p>';
       }
     }
 
@@ -294,6 +291,7 @@ function initDropdownInjections() {
     if (spotlight.length === 0) spotlight = PROPERTIES.slice(0, 3);
 
     // 2. Build High-End Gallery Structure
+    villasDropdown.classList.remove('dropdown-scrollable');
     villasDropdown.classList.add('dropdown-mega');
     villasDropdown.innerHTML = `
       <div class="mega-gallery">
