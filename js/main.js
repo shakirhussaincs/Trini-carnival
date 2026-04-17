@@ -297,9 +297,14 @@ function initDropdownInjections() {
   const locationsDropdown = document.getElementById('locations-dropdown');
 
   if (villasDropdown) {
-    // 1. Prepare Spotlight Villas (Top 3 with images)
-    let spotlight = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 5);
-    if (spotlight.length === 0) spotlight = PROPERTIES.slice(0, 5);
+    // 1. Prepare Spotlight Villas (Strictly 5 for the mosaic)
+    let spotlight = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular');
+    if (spotlight.length < 5) {
+      const others = PROPERTIES.filter(p => !spotlight.includes(p));
+      spotlight = [...spotlight, ...others].slice(0, 5);
+    } else {
+      spotlight = spotlight.slice(0, 5);
+    }
 
     // 2. Build High-End Gallery Structure
     villasDropdown.classList.remove('dropdown-scrollable');
@@ -336,15 +341,42 @@ function initDropdownInjections() {
   }
 
   if (locationsDropdown) {
-    locationsDropdown.innerHTML = '<div class="dropdown-header">Explore Regions</div>';
-    if (ALL_LOCATIONS.length > 10) locationsDropdown.classList.add('dropdown-scrollable');
-    
-    ALL_LOCATIONS.forEach(loc => {
-      const a = document.createElement('a');
-      a.href = `location.html?place=${encodeURIComponent(loc)}`;
-      a.textContent = loc;
-      locationsDropdown.appendChild(a);
-    });
+    locationsDropdown.classList.add('dropdown-mega');
+    locationsDropdown.classList.remove('dropdown-scrollable');
+
+    // Count properties per location
+    const counts = {};
+    PROPERTIES.forEach(p => counts[p.location] = (counts[p.location] || 0) + 1);
+
+    // Spotlight: Top region
+    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+    const topLoc = sorted[0] ? sorted[0][0] : ALL_LOCATIONS[0];
+    const topProp = PROPERTIES.find(p => p.location === topLoc);
+
+    locationsDropdown.innerHTML = `
+      <div class="mega-gallery" style="background: var(--bg-light);">
+        <h5>Destination Spotlight</h5>
+        <a href="location.html?place=${encodeURIComponent(topLoc)}" class="mega-item">
+          <div class="mega-img"><img src="${topProp ? topProp.image : ''}" alt="${topLoc}"></div>
+          <div class="mega-info">${escapeHTML(topLoc)} Collection</div>
+        </a>
+        <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 15px; line-height: 1.6;">
+          Explore our signature portfolio in ${escapeHTML(topLoc)}, featuring the island's most refined architectural escapes.
+        </p>
+      </div>
+      <div class="mega-links">
+        <h5>Explore by District</h5>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 4px;">
+          ${ALL_LOCATIONS.slice(0, 10).map(loc => `
+            <a href="location.html?place=${encodeURIComponent(loc)}" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(0,0,0,0.03); padding: 8px 0;">
+              <span>${escapeHTML(loc)}</span>
+              <span style="font-size: 0.6rem; font-weight:700; opacity:0.6;">${counts[loc]} PROPERTIES</span>
+            </a>
+          `).join('')}
+        </div>
+        <a href="villas.html" class="view-all-link" style="margin-top:auto; padding-top:20px;">VIEW GLOBAL PORTFOLIO &rarr;</a>
+      </div>
+    `;
   }
 }
 
