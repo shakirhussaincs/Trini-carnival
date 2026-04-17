@@ -1,14 +1,26 @@
-/* =============================================
-   ADMIN JS — Supabase-powered (no backend)
-   ============================================= */
+/* ---------- Utilities ---------- */
+const escapeHTML = (str) => {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --- AUTH GUARD ---
+  const isAuthenticated = localStorage.getItem('admin_auth') === 'true';
   const path = window.location.pathname;
-  
-  // Robust check for Admin Dashboard root (handles /admin, /admin/, /admin/index.html)
-  const isDashboard = path.endsWith('/admin') || path.endsWith('/admin/') || path.endsWith('admin/index.html');
-  
-  if (isDashboard) fetchStats();
+
+  if (!isAuthenticated && !path.includes('login.html')) {
+    window.location.href = '/admin/login.html';
+    return;
+  }
+  // ------------------
+
+  if (path.endsWith('/admin') || path.endsWith('/admin/') || path.endsWith('admin/index.html')) fetchStats();
   if (path.includes('bookings.html')) fetchBookings();
   if (path.includes('properties.html')) {
     fetchProperties();
@@ -73,16 +85,16 @@ async function fetchProperties() {
 
     tbody.innerHTML = (data || []).map(p => `
       <tr>
-        <td><code>${p.id}</code></td>
+        <td><code>${escapeHTML(p.id)}</code></td>
         <td>
           <div style="display: flex; align-items: center; gap: 15px;">
             <img src="${p.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; background: #eee;" onerror="this.src='/images/logo.png'">
-            <strong>${p.name}</strong>
+            <strong>${escapeHTML(p.name)}</strong>
           </div>
         </td>
-        <td>${p.location}</td>
-        <td>${p.bedrooms} Beds</td>
-        <td>${p.capacity}</td>
+        <td>${escapeHTML(p.location)}</td>
+        <td>${escapeHTML(p.bedrooms)} Beds</td>
+        <td>${escapeHTML(p.capacity)}</td>
         <td>
           <div style="display: flex; gap: 8px;">
             <button class="btn btn-outline" style="color:var(--accent); border-color:var(--accent); padding: 5px 10px; font-size: 0.6rem;" onclick="editProperty('${p.id}')">Edit</button>
@@ -467,12 +479,12 @@ function renderBookings() {
   }
   tbody.innerHTML = ALL_BOOKINGS.map(b => `
     <tr>
-      <td style="font-family:monospace;">#${b.id.toString().padStart(4, '0')}</td>
-      <td><strong>${b.firstName} ${b.lastName}</strong><br><small style="color:var(--text-light)">${b.email}</small></td>
-      <td style="font-weight:600; color:var(--accent);">${b.propertyName}</td>
-      <td>${b.checkIn} to ${b.checkOut}</td>
-      <td>${b.guests}</td>
-      <td><span class="badge badge-${b.status.toLowerCase()}">${b.status}</span></td>
+      <td style="font-family:monospace;">#${escapeHTML(b.id.toString().padStart(4, '0'))}</td>
+      <td><strong>${escapeHTML(b.firstName)} ${escapeHTML(b.lastName)}</strong><br><small style="color:var(--text-light)">${escapeHTML(b.email)}</small></td>
+      <td style="font-weight:600; color:var(--accent);">${escapeHTML(b.propertyName)}</td>
+      <td>${escapeHTML(b.checkIn)} to ${escapeHTML(b.checkOut)}</td>
+      <td>${escapeHTML(b.guests)}</td>
+      <td><span class="badge badge-${escapeHTML(b.status.toLowerCase())}">${escapeHTML(b.status)}</span></td>
       <td><button class="btn" onclick="viewBooking(${b.id})">Review</button></td>
     </tr>
   `).join('');
@@ -488,21 +500,21 @@ function viewBooking(id) {
   
   document.getElementById('modal-body').innerHTML = `
     <div>
-      <p><strong>Property Selected</strong> ${b.propertyName}</p>
-      <p><strong>Check In</strong> ${b.checkIn}</p>
-      <p><strong>Check Out</strong> ${b.checkOut}</p>
-      <p><strong>No. of Guests</strong> ${b.guests}</p>
-      <p><strong>Current Status</strong> <span class="badge badge-${b.status.toLowerCase()}">${b.status}</span></p>
+      <p><strong>Property Selected</strong> ${escapeHTML(b.propertyName)}</p>
+      <p><strong>Check In</strong> ${escapeHTML(b.checkIn)}</p>
+      <p><strong>Check Out</strong> ${escapeHTML(b.checkOut)}</p>
+      <p><strong>No. of Guests</strong> ${escapeHTML(b.guests)}</p>
+      <p><strong>Current Status</strong> <span class="badge badge-${escapeHTML(b.status.toLowerCase())}">${escapeHTML(b.status)}</span></p>
     </div>
     <div>
-      <p><strong>Primary Contact</strong> ${b.firstName} ${b.lastName}</p>
-      <p><strong>Email Address</strong> <a href="mailto:${b.email}" style="color:var(--accent);">${b.email}</a></p>
-      <p><strong>Phone Number</strong> ${b.phone}</p>
-      <p><strong>Request Date</strong> ${new Date(b.createdAt).toLocaleString()}</p>
+      <p><strong>Primary Contact</strong> ${escapeHTML(b.firstName)} ${escapeHTML(b.lastName)}</p>
+      <p><strong>Email Address</strong> <a href="mailto:${escapeHTML(b.email)}" style="color:var(--accent);">${escapeHTML(b.email)}</a></p>
+      <p><strong>Phone Number</strong> ${escapeHTML(b.phone)}</p>
+      <p><strong>Request Date</strong> ${escapeHTML(new Date(b.createdAt).toLocaleString())}</p>
     </div>
     <div style="grid-column: 1/-1; background: var(--bg-light); padding: 20px; border-radius: 4px; border: 1px solid var(--border);">
       <strong>User Message / Special Requests</strong>
-      <p style="margin-top: 10px; font-style: italic; color: var(--text-gray);">${b.message || 'No additional message provided.'}</p>
+      <p style="margin-top: 10px; font-style: italic; color: var(--text-gray);">${escapeHTML(b.message) || 'No additional message provided.'}</p>
     </div>
   `;
 

@@ -7,7 +7,9 @@
   <link rel="stylesheet" href="/admin/css/admin.css">
   <script src="/admin/js/auth.js"></script>
   <style>
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (min-width: 769px) {
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    }
     .form-group-full { grid-column: 1 / -1; }
     input, select, textarea { 
       width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; 

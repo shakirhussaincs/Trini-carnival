@@ -93,6 +93,17 @@ function renderBedroomHeader(label) {
   `;
 }
 
+/* ---------- Utilities ---------- */
+const escapeHTML = (str) => {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   initGlobalHeader();
   initFAQ();
@@ -128,7 +139,7 @@ async function fetchPropertyDetails(id) {
     const heroBg = document.getElementById('hero-bg-img');
     const heroName = document.getElementById('villa-name-main');
     if (heroBg) heroBg.style.backgroundImage = `url('${prop.image}')`;
-    if (heroName) heroName.textContent = prop.name;
+    if (heroName) heroName.textContent = escapeHTML(prop.name);
 
     // Inject Pricing
     const priceTTD = document.getElementById('price-ttd');
@@ -187,7 +198,7 @@ async function fetchPropertyDetails(id) {
     if (nameSecondary) nameSecondary.textContent = prop.name;
 
     const locSecondary = document.getElementById('villa-location-secondary');
-    if (locSecondary) locSecondary.textContent = prop.location;
+    if (locSecondary) locSecondary.textContent = escapeHTML(prop.location);
 
     const calTitle = document.getElementById('calendar-title');
     if (calTitle) calTitle.textContent = `Check Availability - ${prop.name}`;
@@ -287,8 +298,8 @@ function initDropdownInjections() {
 
   if (villasDropdown) {
     // 1. Prepare Spotlight Villas (Top 3 with images)
-    let spotlight = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 3);
-    if (spotlight.length === 0) spotlight = PROPERTIES.slice(0, 3);
+    let spotlight = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 5);
+    if (spotlight.length === 0) spotlight = PROPERTIES.slice(0, 5);
 
     // 2. Build High-End Gallery Structure
     villasDropdown.classList.remove('dropdown-scrollable');
@@ -317,8 +328,8 @@ function initDropdownInjections() {
       a.href = `property.html?id=${p.id}`;
       a.className = 'mega-item';
       a.innerHTML = `
-        <div class="mega-img"><img src="${p.image}" alt="${p.name}"></div>
-        <div class="mega-info">${p.name}</div>
+        <div class="mega-img"><img src="${p.image}" alt="${escapeHTML(p.name)}"></div>
+        <div class="mega-info">${escapeHTML(p.name)}</div>
       `;
       grid.appendChild(a);
     });
