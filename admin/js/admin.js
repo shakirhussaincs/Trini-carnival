@@ -124,20 +124,50 @@ const processImageFile = (file, maxWidth = 1200) => {
   });
 };
 
-window.previewImages = () => {
+window.previewImages = async () => {
   const container = document.getElementById('image-preview-container');
-  const files = Array.from(document.getElementById('p-image').files);
-  container.innerHTML = '';
-  files.forEach(f => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const div = document.createElement('div');
-      div.style = 'width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--accent); position: relative;';
-      div.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-      container.appendChild(div);
-    };
-    reader.readAsDataURL(f);
-  });
+  const fileInput = document.getElementById('p-image');
+  const files = Array.from(fileInput.files);
+  
+  if (files.length === 0) return;
+
+  // Show a "Processing" state if many files
+  const originalLabel = fileInput.previousElementSibling;
+  const originalText = originalLabel.innerText;
+  if(files.length > 2) originalLabel.innerText = "Processing Images...";
+
+  for (const f of files) {
+    try {
+      const base64 = await processImageFile(f);
+      STAGED_IMAGES.push(base64);
+    } catch (err) {
+      console.error("Error processing file:", err);
+    }
+  }
+
+  // Clear input so it doesn't hold files already staged
+  fileInput.value = "";
+  originalLabel.innerText = originalText;
+  
+  renderPreviews();
+};
+
+window.renderPreviews = () => {
+  const container = document.getElementById('image-preview-container');
+  if (!container) return;
+  
+  container.innerHTML = STAGED_IMAGES.map((img, index) => `
+    <div class="preview-item">
+      <img src="${img}">
+      <button type="button" class="preview-remove" onclick="removeImage(${index})" title="Remove">×</button>
+      ${index === 0 ? '<div class="featured-badge">Featured</div>' : ''}
+    </div>
+  `).join('');
+};
+
+window.removeImage = (index) => {
+  STAGED_IMAGES.splice(index, 1);
+  renderPreviews();
 };
 
 function showToast(msg, icon = '✨') {
@@ -198,6 +228,7 @@ function showConfirmModal({ title, msg, icon, onConfirm }) {
 }
 
 let EDIT_DATA = null;
+let STAGED_IMAGES = []; // Global store for images to be uploaded
 
 async function editProperty(id) {
   try {
@@ -221,8 +252,8 @@ async function editProperty(id) {
     document.getElementById('p-desc').value = p.description || '';
     
     // Preview image
-    const preview = document.getElementById('image-preview-container');
-    preview.innerHTML = `<div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 2px solid var(--accent);"><img src="${p.image}" style="width: 100%; height: 100%; object-fit: cover;"></div>`;
+    STAGED_IMAGES = p.gallery && p.gallery.length > 0 ? [...p.gallery] : (p.image ? [p.image] : []);
+    renderPreviews();
     
     // Change UI mode
     document.getElementById('p-mode').value = 'update';
@@ -289,6 +320,7 @@ function resetForm(form) {
   document.getElementById('submit-btn').innerText = 'PUBLISH ESTATE';
   document.getElementById('cancel-edit').style.display = 'none';
   document.querySelector('.panel-header h2').innerText = 'Add New Property';
+  STAGED_IMAGES = [];
   document.getElementById('image-preview-container').innerHTML = '';
 }
 
@@ -302,6 +334,13 @@ function initPropertyForm() {
     const originalText = btn.innerText;
     btn.innerText = 'PROCESSING...';
     btn.disabled = true;
+    
+    if (STAGED_IMAGES.length === 0) {
+      showToast('Please upload at least one image', '⚠️');
+      btn.innerText = originalText;
+      btn.disabled = false;
+      return;
+    }
 
     try {
       const mode = document.getElementById('p-mode').value;
@@ -318,22 +357,8 @@ function initPropertyForm() {
           btn.disabled = true;
 
           try {
-            const fileInput = document.getElementById('p-image');
-            const files = Array.from(fileInput.files);
-            
-            let finalImage = EDIT_DATA ? EDIT_DATA.image : null;
-            let finalGallery = EDIT_DATA ? EDIT_DATA.gallery : [];
-
-            if (files.length > 0) {
-              const base64Images = [];
-              for (const file of files) {
-                btn.innerText = `COMPRESSING ${base64Images.length + 1}/${files.length}...`;
-                const base64 = await processImageFile(file);
-                base64Images.push(base64);
-              }
-              finalImage = base64Images[0];
-              finalGallery = base64Images;
-            }
+            const finalImage = STAGED_IMAGES.length > 0 ? STAGED_IMAGES[0] : null;
+            const finalGallery = STAGED_IMAGES;
 
             const payload = {
               id: document.getElementById('p-id').value,

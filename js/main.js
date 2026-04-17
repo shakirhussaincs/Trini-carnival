@@ -289,20 +289,47 @@ function initDropdownInjections() {
   const locationsDropdown = document.getElementById('locations-dropdown');
 
   if (villasDropdown) {
-    const viewAll = villasDropdown.querySelector('a[style*="font-weight: 700"]');
-    villasDropdown.innerHTML = '';
-    if (viewAll) villasDropdown.appendChild(viewAll);
+    // 1. Prepare Spotlight Villas (Top 3 with images)
+    let spotlight = PROPERTIES.filter(p => p.badge === 'Featured' || p.badge === 'Ultimate' || p.badge === 'Popular').slice(0, 3);
+    if (spotlight.length === 0) spotlight = PROPERTIES.slice(0, 3);
 
-    PROPERTIES.sort((a,b) => a.name.localeCompare(b.name)).forEach(p => {
+    // 2. Build High-End Gallery Structure
+    villasDropdown.classList.add('dropdown-mega');
+    villasDropdown.innerHTML = `
+      <div class="mega-gallery">
+        <h5>Spotlight Collection</h5>
+        <div class="mega-grid" id="mega-gallery-grid"></div>
+      </div>
+      <div class="mega-links">
+        <h5>Discover By Size</h5>
+        <a href="villas.html?filter=2">Two Bedroom Retreats</a>
+        <a href="villas.html?filter=3">Three Bedroom Villas</a>
+        <a href="villas.html?filter=4">Four Bedroom Masterpieces</a>
+        <a href="villas.html?filter=6-8">Grande Estates (6-8 beds)</a>
+        
+        <h5 style="margin-top:20px;">Discovery</h5>
+        <a href="location.html">Browse by Destination</a>
+        <a href="villas.html" class="view-all-link">VIEW ALL PROPERTIES &rarr;</a>
+      </div>
+    `;
+
+    const grid = villasDropdown.querySelector('#mega-gallery-grid');
+    spotlight.forEach(p => {
       const a = document.createElement('a');
       a.href = `property.html?id=${p.id}`;
-      a.textContent = p.name;
-      villasDropdown.appendChild(a);
+      a.className = 'mega-item';
+      a.innerHTML = `
+        <div class="mega-img"><img src="${p.image}" alt="${p.name}"></div>
+        <div class="mega-info">${p.name}</div>
+      `;
+      grid.appendChild(a);
     });
   }
 
   if (locationsDropdown) {
     locationsDropdown.innerHTML = '<div class="dropdown-header">Explore Regions</div>';
+    if (ALL_LOCATIONS.length > 10) locationsDropdown.classList.add('dropdown-scrollable');
+    
     ALL_LOCATIONS.forEach(loc => {
       const a = document.createElement('a');
       a.href = `location.html?place=${encodeURIComponent(loc)}`;
@@ -332,7 +359,24 @@ function initPageRendering() {
   // All Villas Grid — Grouped by Bedrooms
   if (path.endsWith('villas.html')) {
     initVillasToolbar();
-    renderVillasGrid(PROPERTIES);
+    const filterId = urlParams.get('filter');
+    if (filterId) {
+      let filtered = PROPERTIES;
+      if (filterId === '5') filtered = PROPERTIES.filter(p => p.bedrooms >= 5);
+      else filtered = PROPERTIES.filter(p => p.bedrooms === parseInt(filterId));
+      
+      // Update UI tabs to match
+      const tabs = document.querySelectorAll('.filter-tab');
+      tabs.forEach(t => {
+        if (t.getAttribute('data-filter') === filterId) t.classList.add('active');
+        else if (filterId === '5' && t.getAttribute('data-filter') === '6-8') t.classList.add('active'); // loose match
+        else t.classList.remove('active');
+      });
+
+      renderVillasGrid(filtered);
+    } else {
+      renderVillasGrid(PROPERTIES);
+    }
   }
 
   // Region / Location Page logic

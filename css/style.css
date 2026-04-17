@@ -337,7 +337,121 @@ a:hover {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Scrollable dropdown for many villas */
+/* High-End Gallery Dropdown */
+.dropdown-mega {
+  min-width: 850px !important;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding: 0 !important;
+  border: none;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.mega-gallery {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #fff;
+}
+
+.mega-gallery h5 {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 15px;
+}
+
+.mega-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.mega-item {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--transition);
+}
+
+.mega-item:hover { transform: translateY(-5px); }
+
+.mega-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mega-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.mega-info {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mega-links {
+  background: var(--bg-light);
+  padding: 30px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mega-links h5 {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.mega-links a {
+  padding: 0 !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-gray);
+  border: none;
+  background: transparent;
+}
+
+.mega-links a:hover {
+  color: var(--accent-red);
+  transform: translateX(5px);
+}
+
+.view-all-link {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-weight: 800 !important;
+  color: var(--primary) !important;
+}
+
+@media (max-width: 1024px) {
+  .dropdown-mega {
+    min-width: calc(100vw - 40px) !important;
+    grid-template-columns: 1fr;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .mega-grid { grid-template-columns: repeat(2, 1fr); }
+  .mega-links { border-left: none; border-top: 1px solid var(--border); }
+}
+
+/* Scrollable dropdown for many villas (legacy/simple) */
 .dropdown-scrollable {
   max-height: 450px;
   overflow-y: auto;
