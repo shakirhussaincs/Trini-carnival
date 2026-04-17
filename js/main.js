@@ -354,27 +354,20 @@ function initDropdownInjections() {
     const topProp = PROPERTIES.find(p => p.location === topLoc);
 
     locationsDropdown.innerHTML = `
-      <div class="mega-gallery" style="background: var(--bg-light);">
-        <h5>Destination Spotlight</h5>
-        <a href="location.html?place=${encodeURIComponent(topLoc)}" class="mega-item">
-          <div class="mega-img"><img src="${topProp ? topProp.image : ''}" alt="${topLoc}"></div>
-          <div class="mega-info">${escapeHTML(topLoc)} Collection</div>
-        </a>
-        <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 15px; line-height: 1.6;">
-          Explore our signature portfolio in ${escapeHTML(topLoc)}, featuring the island's most refined architectural escapes.
-        </p>
-      </div>
-      <div class="mega-links">
-        <h5>Explore by District</h5>
-        <div style="display: grid; grid-template-columns: 1fr; gap: 4px;">
-          ${ALL_LOCATIONS.slice(0, 10).map(loc => `
-            <a href="location.html?place=${encodeURIComponent(loc)}" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(0,0,0,0.03); padding: 8px 0;">
-              <span>${escapeHTML(loc)}</span>
-              <span style="font-size: 0.6rem; font-weight:700; opacity:0.6;">${counts[loc]} PROPERTIES</span>
+      <div class="mega-links" style="grid-column: 1 / span 2; padding: 40px; background: #fff;">
+        <h5>Explore Our Destinations</h5>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: x 40px; gap: y 10px; margin-top: 20px;">
+          ${ALL_LOCATIONS.map(loc => `
+            <a href="location.html?place=${encodeURIComponent(loc)}" style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(0,0,0,0.03); padding: 12px 0; transition: var(--transition);">
+              <span style="font-weight: 500;">${escapeHTML(loc)}</span>
+              <span style="font-size: 0.6rem; font-weight:800; opacity:0.6; color: var(--accent);">${counts[loc]} PROPERTIES</span>
             </a>
           `).join('')}
         </div>
-        <a href="villas.html" class="view-all-link" style="margin-top:auto; padding-top:20px;">VIEW GLOBAL PORTFOLIO &rarr;</a>
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+          <p style="font-size: 0.75rem; color: var(--text-gray);">Discover high-end rentals across Tobago's most prestigious districts.</p>
+          <a href="villas.html" class="view-all-link">VIEW ENTIRE PORTFOLIO &rarr;</a>
+        </div>
       </div>
     `;
   }
